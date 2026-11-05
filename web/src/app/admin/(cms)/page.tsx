@@ -20,10 +20,12 @@ function setupWarnings(): { title: string; text: string }[] {
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const [media, users] = await Promise.all([
+  const [media, users, settings] = await Promise.all([
     prisma.mediaAsset.count({ where: { deletedAt: null } }),
     prisma.user.count({ where: { active: true } }),
+    prisma.siteSettings.findUnique({ where: { id: 1 }, select: { googleAnalyticsId: true } }),
   ]);
+  const analytics = settings?.googleAnalyticsId ?? '';
   const warnings = setupWarnings();
 
   return (
@@ -37,6 +39,7 @@ export default async function DashboardPage() {
       <div style={{ display: 'grid', gap: 'var(--space-4)', gridTemplateColumns: 'repeat(auto-fit, minmax(11rem, 1fr))' }}>
         <StatCard label="Files in the media library" value={media} href="/admin/media" />
         <StatCard label="Active users" value={users} href="/admin/users" />
+        <StatCard label={analytics ? `Google Analytics · ${analytics}` : 'Google Analytics is off'} value={analytics ? 'On' : 'Off'} href="/admin/settings" />
       </div>
     </>
   );

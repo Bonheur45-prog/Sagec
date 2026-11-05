@@ -3,6 +3,8 @@
 
 export const NOTICES = {
   saved: 'Saved.',
+  discarded: 'Unpublished changes thrown away. The editor shows what is live again.',
+  'version-restored': 'That version is now in the draft. Check it, then publish to put it live.',
   'user-added': 'User added. Give them their email and password; they can change the password after logging in.',
   'password-set': 'Password changed. That user was logged out everywhere.',
   'own-password': 'Your password was changed. You were logged out on your other devices.',

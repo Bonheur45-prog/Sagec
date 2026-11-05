@@ -62,6 +62,9 @@ jobs:
             --shadow-database-url "postgresql://sagec:sagec@localhost:5434/sagec_shadow" --exit-code > /tmp/out.txt 2>&1 \
             || { echo "::error title=Schema drift::prisma/schema.prisma and prisma/migrations differ. Run npm run db:migrate."; sed 's/^/::error title=Drift::/' /tmp/out.txt | tail -40; exit 1; }
 
+      - name: Seed (twice, must be safe to repeat)
+        run: (npm run db:seed && npm run db:seed) > /tmp/out.txt 2>&1 || { tail -40 /tmp/out.txt | sed 's/^/::error title=Seed::/'; exit 1; }
+
       - name: Typecheck
         run: npm run typecheck > /tmp/out.txt 2>&1 || { tail -40 /tmp/out.txt | sed 's/^/::error title=Typecheck::/'; exit 1; }
 
@@ -85,7 +88,9 @@ jobs:
           EXPECT=200 check http://localhost:3000/admin/login
           EXPECT=200 check http://localhost:3000/images/brand/sagec-logo-light.png
           # no session cookie: every CMS screen sends you to the login page
-          for p in /admin /admin/media /admin/users /admin/activity; do EXPECT=307 check "http://localhost:3000$p"; done
+          for p in /admin /admin/media /admin/users /admin/activity /admin/settings /admin/header /admin/footer; do EXPECT=307 check "http://localhost:3000$p"; done
+          # Google Analytics stays off until an ID is saved in Site settings
+          curl -s http://localhost:3000/ | grep -q googletagmanager && { echo "::error title=Smoke::Google Analytics loads without an ID in Site settings"; fail=1; }
           # a forged session cookie passes the quick cookie check, so the page itself must ask the
           # database and refuse it. This proves the built site can reach PostgreSQL.
           EXPECT=307 check -b 'sagec_admin_session=forged' http://localhost:3000/admin

@@ -2,7 +2,7 @@
   "name": "sagec-website",
   "version": "0.1.0",
   "private": true,
-  "description": "SAGEC Ltd — website and custom CMS (Next.js + Prisma + PostgreSQL + Cloudflare R2)",
+  "description": "SAGEC Ltd \u2014 website and custom CMS (Next.js + Prisma + PostgreSQL + Cloudflare R2)",
   "engines": {
     "node": ">=20.9.0"
   },
@@ -17,6 +17,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "user:create": "tsx scripts/create-user.ts"
   },
