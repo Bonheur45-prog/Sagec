@@ -3,6 +3,10 @@
 
 export const NOTICES = {
   saved: 'Saved.',
+  created: 'Created as a draft. Fill it in, then set it to Published (or Open) and save.',
+  trashed: 'Moved to the trash. You can restore it from Trash.',
+  restored: 'Restored as a draft. Publish it again when ready.',
+  'deleted-entity': 'Deleted for good. Its photos are still in the media library.',
   discarded: 'Unpublished changes thrown away. The editor shows what is live again.',
   'version-restored': 'That version is now in the draft. Check it, then publish to put it live.',
   'user-added': 'User added. Give them their email and password; they can change the password after logging in.',
@@ -14,6 +18,7 @@ export const NOTICES = {
 
 export const ERRORS = {
   'not-found': 'It no longer exists. It may have been deleted in another window.',
+  'missing-title': 'Type a name first.',
   'bad-email': 'Use a valid email address.',
   'bad-name': 'Add a name (at most 80 characters).',
   'short-password': 'Use a password of at least 10 characters (at most 200).',

@@ -6,15 +6,23 @@ import { requireUser } from '@/lib/auth/session';
 import { getEditorState, listVersions } from '@/lib/cms/drafts';
 import { noticeFrom } from '@/lib/cms/notices';
 import { SITE_PAGES, type FooterDoc, type HeaderDoc } from '@/lib/cms/globals-model';
+import { prisma } from '@/lib/db';
 import { discardDoc, restoreDocVersion } from './doc-actions';
 
 /** Shared screen for the header and footer editors. */
 export async function DocEditorPage({ kind, searchParams }: { kind: 'header' | 'footer'; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await requireUser();
-  const [state, versions, query] = await Promise.all([getEditorState(kind), listVersions(kind), searchParams]);
+  const live = { deletedAt: null, status: 'PUBLISHED' as const };
+  const [state, versions, query, services, projects] = await Promise.all([
+    getEditorState(kind),
+    listVersions(kind),
+    searchParams,
+    prisma.service.findMany({ where: live, select: { slug: true }, orderBy: { sortOrder: 'asc' } }),
+    prisma.project.findMany({ where: live, select: { slug: true }, orderBy: { sortOrder: 'asc' } }),
+  ]);
   const { notice, error } = noticeFrom(query);
-  // TODO(Phase 3): add each service and project page to the suggestions.
-  const pages = SITE_PAGES;
+  // Suggestions in the link boxes: the main pages plus every published service and project page.
+  const pages = [...SITE_PAGES, ...services.map((s) => `/services/${s.slug}`), ...projects.map((p) => `/projects/${p.slug}`)];
   const title = kind === 'header' ? 'Header' : 'Footer';
 
   return (

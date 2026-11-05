@@ -114,19 +114,29 @@ export async function createVideoAsset(v: NewVideo): Promise<AdminMedia> {
 /**
  * Names of the places that use a file, e.g. ["Site settings", "Project: silverback-mall"]. Empty = unused.
  * A file still in use cannot be moved to the trash. Each phase adds the references it creates
- * (Phase 3: services, projects…; Phase 4: pages; Phase 5: blog posts).
+ * (Phase 4: pages; Phase 5: blog posts).
  */
 export async function mediaUsage(id: string): Promise<string[]> {
   const like = `%${id}%`;
-  const [settings, globals] = await Promise.all([
+  const [settings, globals, services, projects, gallery, testimonials, partners] = await Promise.all([
     prisma.siteSettings.count({ where: { OR: [{ logoMediaId: id }, { logoLightMediaId: id }, { defaultOgMediaId: id }] } }),
     // The header and footer keep ids inside JSON, so those are found by text search.
     prisma.$queryRaw<{ key: string }[]>`SELECT key FROM "GlobalSection" WHERE draft::text LIKE ${like} OR published::text LIKE ${like}`,
+    prisma.service.findMany({ where: { OR: [{ coverMediaId: id }, { detailMediaId: id }] }, select: { title: true }, take: 5 }),
+    prisma.project.findMany({ where: { OR: [{ coverMediaId: id }, { featuredMediaId: id }] }, select: { title: true }, take: 5 }),
+    prisma.projectMedia.findMany({ where: { mediaId: id }, select: { project: { select: { title: true } } }, take: 5 }),
+    prisma.testimonial.findMany({ where: { avatarMediaId: id }, select: { name: true }, take: 5 }),
+    prisma.partner.findMany({ where: { logoMediaId: id }, select: { name: true }, take: 5 }),
   ]);
   const uses: string[] = [];
   if (settings) uses.push('Site settings');
   for (const g of globals) uses.push(`Site-wide: ${g.key}`);
-  return uses;
+  for (const s of services) uses.push(`Service: ${s.title}`);
+  for (const p of projects) uses.push(`Project: ${p.title}`);
+  for (const g of gallery) uses.push(`Project gallery: ${g.project.title}`);
+  for (const t of testimonials) uses.push(`Testimonial: ${t.name}`);
+  for (const p of partners) uses.push(`Partner: ${p.name}`);
+  return [...new Set(uses)];
 }
 
 // ───────────── Library queries ─────────────

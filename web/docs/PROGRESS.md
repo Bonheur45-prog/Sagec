@@ -13,9 +13,10 @@ Each phase is one pull request. Web CI (`.github/workflows/web-ci.yml`) must be 
 | # | Phase | Status |
 |---|---|---|
 | 1 | Foundation: schema, login, users, activity log, R2 media library, SAGEC-branded admin shell, CI | done (PR #3) |
-| 2 | Site settings (company, contact, socials, logos, SEO defaults, **Google Analytics**, Search Console, fonts, parallax/smooth-scroll), header and footer editors with draft → publish → version history | **this PR** |
-| 3 | Collections: services, projects (+ gallery), testimonials, partners, stats, job openings, messages (+ email notification, Turnstile, rate limit, CSV export), trash, slug redirects | |
-| 4 | Page builder: SAGEC section catalogue built from the existing site's sections, layouts, backgrounds, SEO panel, draft/publish, versions | |
+| 2 | Site settings (company, contact, socials, logos, SEO defaults, **Google Analytics**, Search Console, fonts, parallax/smooth-scroll), header and footer editors with draft → publish → version history | done (PR #4) |
+| 3a | Collections: services, projects (+ gallery, linked services, featured), testimonials, partners, job openings, trash, slug redirects | **this PR** |
+| 3b | Messages inbox (+ email notification, Turnstile, rate limit, CSV export) | |
+| 4 | Page builder: SAGEC section catalogue built from the existing site's sections (incl. the home page stats), layouts, backgrounds, SEO panel, draft/publish, versions | |
 | 5 | Blog: categories, tags, authors, Tiptap editor, scheduling, comment moderation, SEO assistant, RSS | |
 | 6 | Public site ported from `frontend/` into Next.js and drawn from the CMS: real share previews, sitemap, canonical addresses, Google Analytics on public pages | |
 | 7 | Content import from the old Atlas database + local images → PostgreSQL + R2, deploy (Caddy block, PM2, GitHub Actions releases, nightly backup), remove `cms/` and `frontend/` | |
@@ -56,6 +57,34 @@ seed run twice · in Chrome, 21 checks: seeded details shown · logo uploaded fr
 saved · only the G- ID kept from a pasted snippet · bad input refused with typed text kept · **GA on public
 pages, not on /admin** · dashboard On/Off · logo in use cannot be trashed · header publish, second publish
 with note in history, discard, restore · footer publish refused for a bad link, then published · activity log.
+
+## What Phase 3a added
+- `/admin/services`, `/projects`, `/testimonials`, `/partners`, `/jobs`: list → create by name (as a draft) →
+  editor with Draft/Published (jobs: Open/Closed), order, and "show on the home page" where it applies.
+- **Services:** name, short description, icon (the site's 6), deliverables (one per line), card photo + optional
+  large photo, search title/description, address. Publishing needs a description and a card photo.
+- **Projects:** SAGEC's fields — category (the site's 5, also the filter), stage + progress, year, location,
+  client, area, short description, full description (one paragraph per line), key facts, cover + wide photo,
+  ordered gallery (up to 40), the services used, **featured** (only one at a time: featuring one un-features
+  the others; a trashed project stops being featured). Publishing needs a description, category and cover.
+- **Testimonials** (quote required to publish), **Partners** (logo required), **Job openings** (department and
+  description required to open; apply email/link optional).
+- **Address renames** leave a redirect (`/projects/old` → `/projects/new`); chains are flattened. Phase 6
+  serves them.
+- `/admin/trash`: restore (as a draft) or delete for good; photos stay in the media library.
+- Photos used by any of these cannot be trashed in the media library (the screen says where they are used).
+- Photo fields now show their own error ("Add a card photo before publishing") — before, only text fields did.
+  The BrightLink CMS has the same gap.
+- Header/footer link suggestions include every published service and project page.
+- Nothing is seeded: the real services, projects, testimonials and partners come from the old database in
+  Phase 7. (The old testimonial seed had invented quotes; they must not be published.)
+
+## Verified (Phase 3a)
+Same sandbox: typecheck · lint · 27 unit tests · in Chrome, 20 checks: create as draft · publishing refused with
+reasons (text and photo fields) · service with icon and deliverables · project with SAGEC details, 2-photo gallery
+and a linked service · featuring a second project un-features the first · two address renames → both old
+addresses redirect straight to the newest · photo in use cannot be trashed · job Open/Closed wording · partner
+needs a logo · trash → restore as draft → delete for good (photos kept) · activity log.
 
 ## Verified (Phase 1)
 In the sandbox, against PostgreSQL 16 and an S3 emulator standing in for R2, on the production build

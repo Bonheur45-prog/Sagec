@@ -6,6 +6,7 @@ import { browseMedia, type PickerItem } from '@/app/admin/(cms)/media/actions';
 import { Button } from '@/components/admin/Button/Button';
 import { MediaThumb } from '@/components/admin/MediaThumb/MediaThumb';
 import { MediaUploader } from '@/components/admin/MediaUploader/MediaUploader';
+import { useFieldError } from '@/components/admin/EntityForm/form-errors';
 import styles from './MediaPicker.module.css';
 
 export type PickedMedia = { id: string; thumbUrl: string | null; alt: string; kind?: 'IMAGE' | 'VIDEO' };
@@ -101,8 +102,9 @@ export function MediaPicker({ open, onClose, onPick, kind = 'IMAGE', title = 'Ch
 export function MediaField({ name, label, hint, initial }: { name: string; label: string; hint?: string; initial: PickedMedia | null }) {
   const [value, setValue] = useState<PickedMedia | null>(initial);
   const [open, setOpen] = useState(false);
+  const error = useFieldError(name); // e.g. "Add a card photo before publishing."
   return (
-    <div className={styles.field}>
+    <div className={styles.field} data-invalid={error ? true : undefined}>
       <span className={styles.label}>{label}</span>
       <input type="hidden" name={name} value={value?.id ?? ''} />
       <div className={styles.fieldRow}>
@@ -110,7 +112,11 @@ export function MediaField({ name, label, hint, initial }: { name: string; label
         <Button size="sm" onClick={() => setOpen(true)}>{value ? 'Change' : 'Choose'}</Button>
         {value && <Button size="sm" variant="ghost" onClick={() => setValue(null)}>Remove</Button>}
       </div>
-      {hint && <span className={styles.hint}>{hint}</span>}
+      {error ? (
+        <span className={styles.error} role="alert">{error}</span>
+      ) : (
+        hint && <span className={styles.hint}>{hint}</span>
+      )}
       <MediaPicker
         open={open}
         onClose={() => setOpen(false)}

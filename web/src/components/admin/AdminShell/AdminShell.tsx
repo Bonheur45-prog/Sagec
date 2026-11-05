@@ -14,7 +14,7 @@ type Props = {
 /**
  * CMS frame: navy sidebar with navigation (top bar on phones) and the page content.
  * The menu only lists screens that exist. Each build phase adds its own links:
- * Phase 3 Content + Messages · Phase 4 Pages · Phase 5 Blog.
+ * Phase 3b Messages · Phase 4 Pages · Phase 5 Blog.
  */
 export function AdminShell({ businessName, user, logoutAction, children }: Props) {
   const groups: { label?: string; links: AdminNavLink[] }[] = [
@@ -22,6 +22,17 @@ export function AdminShell({ businessName, user, logoutAction, children }: Props
       links: [
         { href: '/admin', label: 'Dashboard' },
         { href: '/admin/media', label: 'Media library' },
+      ],
+    },
+    {
+      label: 'Content',
+      links: [
+        { href: '/admin/services', label: 'Services' },
+        { href: '/admin/projects', label: 'Projects' },
+        { href: '/admin/testimonials', label: 'Testimonials' },
+        { href: '/admin/partners', label: 'Partners' },
+        { href: '/admin/jobs', label: 'Job openings' },
+        { href: '/admin/trash', label: 'Trash' },
       ],
     },
     {
