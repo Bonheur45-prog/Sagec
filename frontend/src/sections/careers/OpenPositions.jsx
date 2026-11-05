@@ -1,11 +1,12 @@
-// src/sections/careers/OpenPositions/index.jsx
-import { useState, useEffect, useCallback, useRef } from "react";
+// src/sections/careers/OpenPositions.jsx
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
-import careers, { DEPARTMENTS, JOB_TYPES } from "@data/careers";
+import { useCareersPage, useJobs } from "@hooks/useCareers";
+import { useCompanyInfo } from "@hooks/useCompanyInfo";
 import styles from "./OpenPositions.module.css";
 
 // ─── Job detail modal ──────────────────────────────────────────
-function JobModal({ job, onClose }) {
+function JobModal({ job, applyEmail, applyInstructions, onClose }) {
   const modalRef = useRef(null);
   const closeRef = useRef(null);
 
@@ -98,9 +99,9 @@ function JobModal({ job, onClose }) {
               <p className={styles.modalSectionLabel}>Requirements</p>
               <ul className={styles.reqList}>
                 {job.requirements.map((req, i) => (
-                  <li key={i} className={styles.reqItem}>
+                  <li key={req.id ?? i} className={styles.reqItem}>
                     <span className={styles.reqBullet} aria-hidden="true" />
-                    {req}
+                    {req.requirement}
                   </li>
                 ))}
               </ul>
@@ -110,15 +111,11 @@ function JobModal({ job, onClose }) {
           {/* How to apply */}
           <p className={styles.modalSectionLabel}>How to Apply</p>
           <div className={styles.applyBox}>
-            <p className={styles.applyText}>
-              Send your CV and a brief cover letter to our HR team. We review
-              all applications and will be in touch if your profile matches
-              our requirements.
-            </p>
+            <p className={styles.applyText}>{applyInstructions}</p>
             <div className={styles.applyLinks}>
-              {job.applyEmail && (
+              {applyEmail && (
                 <a
-                  href={`mailto:${job.applyEmail}?subject=Application: ${encodeURIComponent(job.title)}`}
+                  href={`mailto:${applyEmail}?subject=${encodeURIComponent(`Application: ${job.title}`)}`}
                   className={styles.applyEmailBtn}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -140,6 +137,13 @@ function JobModal({ job, onClose }) {
                     <path d="M3 8h10M8 3l5 5-5 5"/>
                   </svg>
                 </a>
+              )}
+              {/* No email or link configured anywhere — never leave the
+                  visitor without a way to apply. */}
+              {!applyEmail && !job.applyLink && (
+                <Link to="/contact" className={styles.applyEmailBtn} onClick={onClose}>
+                  Contact Us to Apply
+                </Link>
               )}
             </div>
           </div>
@@ -192,8 +196,8 @@ function JobCard({ job, onSelect }) {
 
 
 // ─── No positions at all ───────────────────────────────────────
-// Renders when careers.js array is completely empty
-function NoJobs() {
+// Renders when the CMS has no open roles
+function NoJobs({ heading, text }) {
   return (
     <div className={styles.noJobs}>
       <svg
@@ -211,12 +215,8 @@ function NoJobs() {
         <line x1="12" y1="12" x2="12" y2="16" />
         <line x1="10" y1="14" x2="14" y2="14" />
       </svg>
-      <h3 className={styles.noJobsHeading}>No Open Positions Right Now</h3>
-      <p className={styles.noJobsText}>
-        We don't have any open roles at the moment, but we're always
-        interested in hearing from talented professionals. Send us your
-        CV and we'll keep you in mind for future opportunities.
-      </p>
+      <h3 className={styles.noJobsHeading}>{heading}</h3>
+      <p className={styles.noJobsText}>{text}</p>
       <Link to="/contact" className={styles.noJobsLink}>
         Get in Touch
         <svg
@@ -238,6 +238,24 @@ function NoJobs() {
 
 // ─── Main section ──────────────────────────────────────────────
 export default function OpenPositions() {
+  const { data: jobs, isLoading, isError } = useJobs();
+  const { data: page } = useCareersPage();
+  const { data: companyEmail } = useCompanyInfo((info) => info?.email);
+  const careers = useMemo(() => jobs ?? [], [jobs]);
+
+  // Filter pills come from the roles that actually exist, so there's never
+  // a pill that leads to an empty list.
+  const DEPARTMENTS = useMemo(() => [...new Set(careers.map((j) => j.department))], [careers]);
+  const JOB_TYPES   = useMemo(() => [...new Set(careers.map((j) => j.type))], [careers]);
+
+  const applyInstructions =
+    page?.applyInstructions ??
+    "Send your CV and a brief cover letter to our HR team. We review all applications and will be in touch if your profile matches our requirements.";
+  const noJobsHeading = page?.noJobsHeading ?? "No Open Positions Right Now";
+  const noJobsText =
+    page?.noJobsText ??
+    "We don\u2019t have any open roles at the moment, but we\u2019re always interested in hearing from talented professionals. Send us your CV and we\u2019ll keep you in mind for future opportunities.";
+
   const [activeDept, setActiveDept] = useState("All");
   const [activeType, setActiveType] = useState("All");
   const [selectedJob, setSelectedJob] = useState(null);
@@ -266,15 +284,21 @@ export default function OpenPositions() {
           <h2 className={styles.sectionHeading} id="positions-heading">
             Open Positions
           </h2>
-          <p className={styles.sectionSub}>
-            {filtered.length} position{filtered.length !== 1 ? "s" : ""} available
-            {(activeDept !== "All" || activeType !== "All") && " matching your filters"}
-          </p>
+          {!isLoading && !isError && careers.length > 0 && (
+            <p className={styles.sectionSub}>
+              {filtered.length} position{filtered.length !== 1 ? "s" : ""} available
+              {(activeDept !== "All" || activeType !== "All") && " matching your filters"}
+            </p>
+          )}
         </div>
 
+        {/* Loading / error (a toast also fires globally on failure) */}
+        {isLoading && <p className={styles.emptyText}>Loading open positions…</p>}
+        {isError && <p className={styles.emptyText}>Could not load open positions right now.</p>}
+
         {/* If no jobs at all — show empty state, skip filters and grid */}
-        {careers.length === 0 ? (
-          <NoJobs />
+        {isLoading || isError ? null : careers.length === 0 ? (
+          <NoJobs heading={noJobsHeading} text={noJobsText} />
         ) : (
           <>
         {/* Filter bar */}
@@ -349,7 +373,12 @@ export default function OpenPositions() {
 
       {/* Modal — rendered outside the grid but inside the section */}
       {selectedJob && (
-        <JobModal job={selectedJob} onClose={handleClose} />
+        <JobModal
+          job={selectedJob}
+          applyEmail={selectedJob.applyEmail || page?.defaultApplyEmail || companyEmail}
+          applyInstructions={applyInstructions}
+          onClose={handleClose}
+        />
       )}
     </section>
   );

@@ -249,6 +249,14 @@ $sg-dark-card-hover: $sg-navy-light;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f26522' d='M4 10l8-7 8 7v10H4zM10 18V12h4v6h5V11.5L12 5 5 11.5V18h5z'/%3E%3C/svg%3E");
   }
 
+  #nav-jobs::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f26522' d='M9 4h6a2 2 0 0 1 2 2v1h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h3V6a2 2 0 0 1 2-2zm0 3h6V6H9v1z'/%3E%3C/svg%3E");
+  }
+
+  #nav-global-careers-page::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f26522' d='M5 3h10l4 4v14H5zm2 6v2h10V9H7zm0 4v2h10v-2H7zm0 4v2h6v-2H7z'/%3E%3C/svg%3E");
+  }
+
   /* ── Section group titles ("Collections" / "Globals") ────── */
   .nav-group__label {
     color: #{$sg-orange};
