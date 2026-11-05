@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-# This gets overwritten automatically by `npm run generate:sitemap`
-# (also runs automatically before every `npm run build`) once
-# VITE_API_URL and VITE_SITE_URL are set in .env. Until then this is
-# just a safe default that allows all crawlers.

@@ -16,6 +16,8 @@ const NOUNS: Record<string, string> = {
   user: 'a user',
   page: 'a page',
   global: 'the header or footer',
+  header: 'the header',
+  footer: 'the footer',
   settings: 'the site settings',
   service: 'a service',
   project: 'a project',
@@ -29,6 +31,7 @@ const NOUNS: Record<string, string> = {
 };
 const VERBS: Record<string, string> = {
   create: 'Created',
+  save: 'Saved a draft of',
   update: 'Edited',
   publish: 'Published',
   unpublish: 'Unpublished',

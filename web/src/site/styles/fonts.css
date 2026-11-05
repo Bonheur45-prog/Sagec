@@ -1,0 +1,14 @@
+/* The curated fonts (src/lib/fonts.ts), self-hosted from npm. A browser only downloads a font file
+   when something on the page uses that font. The site-wide heading/body fonts come from CMS → Site
+   settings and are applied in the public layout by overriding --font-heading / --font-body. */
+:root {
+  --font-plus-jakarta-sans: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-inter: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-outfit: 'Outfit Variable', system-ui, sans-serif;
+  --font-dm-sans: 'DM Sans Variable', system-ui, sans-serif;
+  --font-poppins: 'Poppins', system-ui, sans-serif;
+  --font-montserrat: 'Montserrat Variable', system-ui, sans-serif;
+  --font-lora: 'Lora Variable', Georgia, serif;
+  --font-merriweather: 'Merriweather Variable', Georgia, serif;
+  --font-playfair: 'Playfair Display Variable', Georgia, serif;
+}

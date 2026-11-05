@@ -2,24 +2,30 @@ import 'server-only';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { refreshPublicSite } from '@/lib/cms/revalidate';
+import { isPageSlug, pageProblems, parsePage, type PageSlug } from '@/lib/pages/schema';
 import { footerProblems, headerProblems, parseFooter, parseHeader, type FooterDoc, type HeaderDoc, type Problems } from './globals-model';
 
 /*
  * Draft → publish → version history (same rules as the BrightLink and Oak CMSs):
  * - Editors only change the DRAFT; visitors see PUBLISHED.
  * - Every publish stores a snapshot in ContentVersion, so an earlier version can be brought back.
- * Keys: "header", "footer" (GlobalSection). Phase 4 adds the pages ("home", "about"…) to this store.
+ * Keys: "header", "footer", and "page:<slug>" for each page's texts (GlobalSection).
  */
 
-export type DocKey = 'header' | 'footer';
-type DocOf<K> = K extends 'header' ? HeaderDoc : FooterDoc;
+export type PageKey = `page:${PageSlug}`;
+export type DocKey = 'header' | 'footer' | PageKey;
+type DocOf<K> = K extends 'header' ? HeaderDoc : K extends 'footer' ? FooterDoc : Record<string, unknown>;
 
-export const isDocKey = (v: unknown): v is DocKey => v === 'header' || v === 'footer';
+export const pageKey = (slug: PageSlug): PageKey => `page:${slug}`;
+export const isDocKey = (v: unknown): v is DocKey => v === 'header' || v === 'footer' || (typeof v === 'string' && v.startsWith('page:') && isPageSlug(v.slice(5)));
 
 type Spec = { parse: (raw: unknown) => unknown; problems: (doc: never) => Problems };
 
 function specFor(k: DocKey): Spec {
-  return k === 'header' ? { parse: parseHeader, problems: headerProblems } : { parse: parseFooter, problems: footerProblems };
+  if (k === 'header') return { parse: parseHeader, problems: headerProblems };
+  if (k === 'footer') return { parse: parseFooter, problems: footerProblems };
+  const slug = k.slice(5) as PageSlug;
+  return { parse: (raw) => parsePage(slug, raw), problems: (doc: Record<string, unknown>) => pageProblems(slug, doc) };
 }
 
 /** Kept per document; older versions are deleted on publish. */

@@ -84,7 +84,8 @@ export function defaultFooterDoc(): FooterDoc {
     contactHeading: 'Get In Touch',
     copyright: '',
     legalLinks: [],
-    credit: { prefix: 'Built by', name: '', url: '' }, // TODO: confirm whether SAGEC wants the developer credit shown
+    // Same credit as the current site; edit or empty the name in CMS → Footer.
+    credit: { prefix: 'Built by', name: 'BONHEUR NSHIMIYIMANA', url: '' },
   };
 }
 

@@ -85,12 +85,17 @@ jobs:
           fail=0
           check() { code=$(curl -s -o /tmp/page.html -w '%{http_code}' "$@"); if [ "$code" != "$EXPECT" ]; then echo "::error title=Smoke::$* returned $code, expected $EXPECT"; fail=1; fi; }
           EXPECT=200 check http://localhost:3000/
+          # every public page renders from the database (starter texts) and has its content in the HTML
+          for p in /about /services /projects /testimonials /careers /blog /contact /sitemap.xml /robots.txt /api/globals/home-page /api/services; do EXPECT=200 check "http://localhost:3000$p"; done
+          curl -s http://localhost:3000/ | grep -q 'Building Excellence' || { echo "::error title=Smoke::Home page HTML has no hero text (server prefetch broken?)"; fail=1; }
+          for p in /no-such-page /services/no-such-service /projects/no-such-project /blog/no-such-post /api/users; do EXPECT=404 check "http://localhost:3000$p"; done
           EXPECT=200 check http://localhost:3000/admin/login
           EXPECT=200 check http://localhost:3000/images/brand/sagec-logo-light.png
           # no session cookie: every CMS screen sends you to the login page
-          for p in /admin /admin/media /admin/users /admin/activity /admin/settings /admin/header /admin/footer /admin/services /admin/projects /admin/testimonials /admin/partners /admin/jobs /admin/trash /admin/blog /admin/blog/categories /admin/blog/authors /admin/comments /admin/messages /admin/subscribers; do EXPECT=307 check "http://localhost:3000$p"; done
-          # Google Analytics stays off until an ID is saved in Site settings
-          curl -s http://localhost:3000/ | grep -q googletagmanager && { echo "::error title=Smoke::Google Analytics loads without an ID in Site settings"; fail=1; }
+          for p in /admin /admin/media /admin/users /admin/activity /admin/settings /admin/pages /admin/pages/home-page /admin/header /admin/footer /admin/services /admin/projects /admin/testimonials /admin/partners /admin/jobs /admin/trash /admin/blog /admin/blog/categories /admin/blog/authors /admin/comments /admin/messages /admin/subscribers; do EXPECT=307 check "http://localhost:3000$p"; done
+          # the seed sets SAGEC's Google Analytics ID: tracked on the public site, never in the CMS
+          curl -s http://localhost:3000/ | grep -q 'G-862Z8TQWQM' || { echo "::error title=Smoke::Google Analytics is missing on the public site"; fail=1; }
+          curl -s http://localhost:3000/admin/login | grep -q googletagmanager && { echo "::error title=Smoke::Google Analytics loads in the CMS"; fail=1; }
           # a forged session cookie passes the quick cookie check, so the page itself must ask the
           # database and refuse it. This proves the built site can reach PostgreSQL.
           EXPECT=307 check -b 'sagec_admin_session=forged' http://localhost:3000/admin

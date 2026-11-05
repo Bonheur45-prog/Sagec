@@ -55,7 +55,7 @@ export default async function SettingsPage() {
     seoDescription: row?.seoDescription ?? d.seoDescription,
     titleTemplate: row?.titleTemplate ?? d.titleTemplate,
     googleSiteVerification: row?.googleSiteVerification ?? '',
-    googleAnalyticsId: row?.googleAnalyticsId ?? '',
+    googleAnalyticsId: row?.googleAnalyticsId ?? d.googleAnalyticsId,
     headingFont: isFontKey(row?.headingFont) ? row!.headingFont : DEFAULT_HEADING_FONT,
     bodyFont: isFontKey(row?.bodyFont) ? row!.bodyFont : DEFAULT_BODY_FONT,
     smoothScroll: row?.smoothScroll ?? true,
