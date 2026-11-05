@@ -26,6 +26,8 @@ import { SeoSettings } from './globals/SeoSettings'
 import { BlogPage } from './globals/BlogPage'
 import { Partners } from './collections/Partners'
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import { Jobs } from './collections/Jobs'
+import { CareersPage } from './globals/CareersPage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -68,8 +70,8 @@ export default buildConfig({
   },
   },
   cors: allowedOrigins,
-  collections: [Users, Media, Services, Projects, Testimonials, Tags, BlogAuthors, BlogPosts, BlogComments, Partners, ContactSubmissions],
-  globals: [ServicesPage, ProjectsPage, CompanyInfo, ContactPage, TestimonialsPage, AboutPage, HomePage, SeoSettings, BlogPage],
+  collections: [Users, Media, Services, Projects, Testimonials, Tags, BlogAuthors, BlogPosts, BlogComments, Partners, ContactSubmissions, Jobs],
+  globals: [ServicesPage, ProjectsPage, CompanyInfo, ContactPage, TestimonialsPage, AboutPage, HomePage, SeoSettings, BlogPage, CareersPage],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

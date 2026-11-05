@@ -78,6 +78,7 @@ export interface Config {
     'blog-comments': BlogComment;
     partners: Partner;
     'contact-submissions': ContactSubmission;
+    jobs: Job;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +97,7 @@ export interface Config {
     'blog-comments': BlogCommentsSelect<false> | BlogCommentsSelect<true>;
     partners: PartnersSelect<false> | PartnersSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    jobs: JobsSelect<false> | JobsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -115,6 +117,7 @@ export interface Config {
     'home-page': HomePage;
     'seo-settings': SeoSetting;
     'blog-page': BlogPage;
+    'careers-page': CareersPage;
   };
   globalsSelect: {
     'services-page': ServicesPageSelect<false> | ServicesPageSelect<true>;
@@ -126,6 +129,7 @@ export interface Config {
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     'seo-settings': SeoSettingsSelect<false> | SeoSettingsSelect<true>;
     'blog-page': BlogPageSelect<false> | BlogPageSelect<true>;
+    'careers-page': CareersPageSelect<false> | CareersPageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -547,6 +551,50 @@ export interface ContactSubmission {
   createdAt: string;
 }
 /**
+ * Open roles appear on the Careers page. Set a role to "Closed" to hide it without deleting it.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs".
+ */
+export interface Job {
+  id: string;
+  /**
+   * e.g. "Senior Architect"
+   */
+  title: string;
+  department: 'Architecture' | 'Engineering' | 'Project Management' | 'Interior Design' | 'Administration';
+  type: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
+  location: string;
+  description: string;
+  /**
+   * One requirement per row, shown as a bulleted list.
+   */
+  requirements?:
+    | {
+        requirement: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional. Leave blank to use the default email from Careers Page settings (or Company Info).
+   */
+  applyEmail?: string | null;
+  /**
+   * Optional, e.g. a Google Form or job-board listing.
+   */
+  applyLink?: string | null;
+  /**
+   * Only open roles appear on the website.
+   */
+  status: 'open' | 'closed';
+  /**
+   * Controls display order on the site (lower numbers first).
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -613,6 +661,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contact-submissions';
         value: string | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'jobs';
+        value: string | Job;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -939,6 +991,29 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   subject?: T;
   message?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "jobs_select".
+ */
+export interface JobsSelect<T extends boolean = true> {
+  title?: T;
+  department?: T;
+  type?: T;
+  location?: T;
+  description?: T;
+  requirements?:
+    | T
+    | {
+        requirement?: T;
+        id?: T;
+      };
+  applyEmail?: T;
+  applyLink?: T;
+  status?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1668,6 +1743,37 @@ export interface BlogPage {
   createdAt?: string | null;
 }
 /**
+ * Page-level copy for the Careers page. The jobs themselves live in "Job Openings".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-page".
+ */
+export interface CareersPage {
+  id: string;
+  eyebrow: string;
+  /**
+   * e.g. "Build Rwanda’s Future With Us"
+   */
+  headline: string;
+  /**
+   * Optional — a word from the headline to show in orange, e.g. "Future". Must match the headline exactly.
+   */
+  headlineHighlight?: string | null;
+  subline: string;
+  /**
+   * Shown inside every job’s details window.
+   */
+  applyInstructions: string;
+  /**
+   * Used for any job without its own Apply Email. Blank = the email in Company Info.
+   */
+  defaultApplyEmail?: string | null;
+  noJobsHeading: string;
+  noJobsText: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services-page_select".
  */
@@ -2177,6 +2283,23 @@ export interface BlogPageSelect<T extends boolean = true> {
         commentMessageLabel?: T;
         commentSubmitLabel?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "careers-page_select".
+ */
+export interface CareersPageSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  headlineHighlight?: T;
+  subline?: T;
+  applyInstructions?: T;
+  defaultApplyEmail?: T;
+  noJobsHeading?: T;
+  noJobsText?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
