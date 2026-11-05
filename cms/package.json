@@ -1,0 +1,75 @@
+{
+  "name": "sagec-cms",
+  "version": "1.0.0",
+  "description": "SAGEC Ltd content management system (Payload CMS)",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seed:about": "npx tsx src/seed/seedAbout.ts",
+    "seed:blog": "npx tsx src/seed/seedBlog.ts",
+    "seed:home": "npx tsx src/seed/seedHomePage.ts",
+    "seed:testimonials": "npx tsx src/seed/seedTestimonials.ts",
+    "seed:contact": "npx tsx src/seed/seedContactPage.ts",
+    "seed:company": "npx tsx src/seed/seedCompanyInfo.ts",
+    "seed:seo": "npx tsx src/seed/seedSeo.ts",
+    "seed:blog-page": "npx tsx src/seed/seedBlogPage.ts",
+    "seed:projects-extras": "npx tsx src/seed/seedProjectsExtras.ts",
+    "seed:all": "npm run seed:home && npm run seed:about && npm run seed:testimonials && npm run seed:contact && npm run seed:company && npm run seed:blog && npm run seed:seo && npm run seed:blog-page && npm run seed:projects-extras",
+    "fix:placeholders": "npx tsx src/seed/fixSharedPlaceholders.ts",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "test": "pnpm run test:int && pnpm run test:e2e",
+    "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
+    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
+  },
+  "dependencies": {
+    "@payloadcms/db-mongodb": "3.85.2",
+    "@payloadcms/next": "3.85.2",
+    "@payloadcms/plugin-cloud-storage": "3.85.2",
+    "@payloadcms/richtext-lexical": "3.85.2",
+    "@payloadcms/ui": "3.85.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "graphql": "^16.8.1",
+    "next": "16.2.6",
+    "payload": "3.85.2",
+    "payload-cloudinary": "^2.3.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sharp": "0.34.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@testing-library/react": "16.3.0",
+    "@types/node": "22.19.9",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "4.5.2",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "16.2.6",
+    "jsdom": "28.0.0",
+    "prettier": "^3.4.2",
+    "sass": "^1.101.0",
+    "tsx": "^4.22.4",
+    "typescript": "5.7.3",
+    "vite-tsconfig-paths": "6.0.5",
+    "vitest": "4.0.18"
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0",
+    "pnpm": "^9 || ^10 || ^11"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild",
+      "unrs-resolver"
+    ]
+  }
+}

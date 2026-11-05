@@ -1,0 +1,275 @@
+/* src/components/layout/Footer/Footer.module.css */
+
+/* ─── Footer wrapper ──────────────────────────────────────────── */
+.footer {
+  background-color: var(--color-navy);
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--font-body);
+  /* Orange top border — visual anchor from white CTA above */
+  border-top: 3px solid var(--color-orange);
+}
+
+/* ─── Main columns area ───────────────────────────────────────── */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 24px 64px;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.2fr 1.3fr;
+  gap: 48px;
+}
+
+/* ─── Column shared styles ────────────────────────────────────── */
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── COL 1: Logo + description + socials ─────────────────────── */
+.logoWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  text-decoration: none;
+}
+
+.logoMark {
+  width: 80%;
+  height: auto;
+  max-height: 120px;
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.logoMark svg {
+  width: 22px;
+  height: 22px;
+  stroke: #fff;
+  fill: none;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoName {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+.logoTagline {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.description {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.75;
+  margin: 0 0 28px;
+  max-width: 280px;
+}
+
+/* Social icons */
+.socials {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.socialBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: border-color 0.22s ease, background 0.22s ease;
+  flex-shrink: 0;
+}
+
+.socialBtn svg {
+  width: 15px;
+  height: 15px;
+  stroke: rgba(255, 255, 255, 0.55);
+  fill: none;
+  transition: stroke 0.22s ease;
+}
+
+.socialBtn:hover {
+  border-color: var(--color-orange);
+  background: rgba(242, 101, 34, 0.1);
+}
+
+.socialBtn:hover svg {
+  stroke: var(--color-orange);
+}
+
+/* ─── COL 2 + 3: Link columns ─────────────────────────────────── */
+.colHeading {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--color-white);
+  margin: 0 0 24px;
+}
+
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.linkList li a {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.52);
+  text-decoration: none;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+  display: inline-block;
+}
+
+.linkList li a:hover {
+  color: var(--color-white);
+  padding-left: 4px;
+}
+
+/* "View all services" orange CTA link */
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-orange);
+  text-decoration: none;
+  margin-top: 16px;
+  transition: gap 0.2s ease;
+}
+
+.viewAllLink:hover {
+  gap: 10px;
+}
+
+/* ─── COL 4: Contact ──────────────────────────────────────────── */
+.contactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.contactIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-orange);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.contactText {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a.contactText:hover {
+  color: var(--color-white);
+}
+
+/* ─── Bottom bar ──────────────────────────────────────────────── */
+.bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bottomInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.copyright {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.builtBy {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.builtBy a {
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.builtBy a:hover {
+  color: var(--color-orange);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+
+/* Tablet: 2×2 grid */
+@media (max-width: 1024px) {
+  .main {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 56px 24px 48px;
+  }
+}
+
+/* Mobile: single column */
+@media (max-width: 640px) {
+  .main {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 48px 20px 40px;
+  }
+
+  .description {
+    max-width: 100%;
+  }
+
+  .bottomInner {
+    flex-direction: column;
+    text-align: center;
+    gap: 6px;
+    padding: 16px 20px;
+  }
+
+  .socials {
+    justify-content: flex-start;
+  }
+}

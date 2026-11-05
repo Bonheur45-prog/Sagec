@@ -1,0 +1,164 @@
+/* ── BACKDROP ─────────────────────────────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(17, 29, 51, 0.65);
+  z-index: calc(var(--z-navbar) + 1);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* ── DRAWER ───────────────────────────────── */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(360px, 88vw);
+  background-color: var(--color-navy);
+  z-index: calc(var(--z-navbar) + 2);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── HEADER ───────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-6);
+  height: var(--navbar-height-mobile);
+  flex-shrink: 0;
+}
+
+.drawerLogo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImg {
+  height: 34px;
+  width: auto;
+  /* Invert to white since background is navy */
+  filter: brightness(0) invert(1);
+  object-fit: contain;
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.7);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+/* ── DIVIDER ──────────────────────────────── */
+.divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-inline: var(--space-6);
+  flex-shrink: 0;
+}
+
+/* ── NAV LINKS ────────────────────────────── */
+.linkList {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6) 0;
+  flex: 1;
+}
+
+.link {
+  display: block;
+  padding: var(--space-4) var(--space-6);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: var(--weight-medium);
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition: color var(--transition-fast), padding-left var(--transition-base);
+  border-left: 2px solid transparent;
+}
+
+.link:hover {
+  color: #ffffff;
+  padding-left: calc(var(--space-6) + 6px);
+}
+
+.linkActive {
+  color: var(--color-orange);
+  border-left-color: var(--color-orange);
+  padding-left: calc(var(--space-6) + 6px);
+}
+
+.linkActive:hover {
+  color: var(--color-orange);
+}
+
+/* ── FOOTER ───────────────────────────────── */
+.footer {
+  padding: var(--space-6);
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 14px var(--space-6);
+  background-color: var(--color-orange);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.cta:hover {
+  background-color: var(--color-orange-dark);
+}
+
+.cta:active {
+  transform: scale(0.98);
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.contactLink {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.contactLink:hover {
+  color: rgba(255, 255, 255, 0.75);
+}

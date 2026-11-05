@@ -1,0 +1,115 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.widget {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+}
+
+.searchBox {
+  position: relative;
+}
+
+.searchBox input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 0.9rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-navy);
+}
+
+.searchBox input:focus {
+  outline: none;
+  border-color: var(--color-orange);
+}
+
+.searchIcon {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  transition: color var(--transition-base);
+}
+
+.searchIcon:hover {
+  color: var(--color-orange-dark);
+}
+
+.widgetTitle {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--color-navy);
+  margin-bottom: var(--space-6);
+}
+
+.popularList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.popularItem {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.popularThumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.popularDate {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--color-orange-dark);
+  letter-spacing: 0.04em;
+}
+
+.popularTitle {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  line-height: 1.35;
+  transition: color var(--transition-base);
+}
+
+.popularItem:hover .popularTitle {
+  color: var(--color-orange-dark);
+}
+
+.tagCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tagPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--color-text-body);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+}

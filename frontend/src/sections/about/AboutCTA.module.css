@@ -1,0 +1,204 @@
+/* ── SECTION ──────────────────────────────── */
+.section {
+  position: relative;
+  background-color: var(--color-navy);
+  padding-block: var(--section-padding-y);
+  overflow: hidden;
+}
+
+/* ── ORANGE DIAGONAL ACCENTS ──────────────── */
+
+/* Top-right large accent */
+.accentTopRight {
+  position: absolute;
+  top: -80px;
+  right: -120px;
+  width: 380px;
+  height: 380px;
+  background-color: var(--color-orange);
+  opacity: 0.07;
+  border-radius: var(--radius-xl);
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+/* Bottom-left smaller accent */
+.accentBottomLeft {
+  position: absolute;
+  bottom: -100px;
+  left: -80px;
+  width: 240px;
+  height: 240px;
+  background-color: var(--color-orange);
+  opacity: 0.05;
+  border-radius: var(--radius-xl);
+  transform: rotate(20deg);
+  pointer-events: none;
+}
+
+/* ── CONTAINER ────────────────────────────── */
+.container {
+  position: relative;
+  z-index: var(--z-above);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: clamp(40px, 6vw, 96px);
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--section-padding-x);
+}
+
+/* ── TEXT SIDE (left) ─────────────────────── */
+.textSide {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 600px;
+}
+
+/* ── EYEBROW ──────────────────────────────── */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-orange);
+  margin-bottom: var(--space-3);
+}
+
+/* ── HEADING ──────────────────────────────── */
+.heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-white);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-5);
+}
+
+/* ── ORANGE ACCENT LINE ───────────────────── */
+.accentLine {
+  width: 48px;
+  height: 3px;
+  background-color: var(--color-orange);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-5);
+}
+
+/* ── SUBLINE ──────────────────────────────── */
+.subline {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: var(--leading-normal);
+}
+
+/* ── BUTTON SIDE (right) ──────────────────── */
+.buttonSide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  flex-shrink: 0;
+  min-width: 200px;
+}
+
+/* ── PRIMARY BUTTON ───────────────────────── */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background-color: var(--color-orange);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-fast),
+    transform        var(--transition-fast);
+}
+
+.btnPrimary:hover {
+  background-color: var(--color-orange-dark);
+  transform: translateY(-2px);
+}
+
+.btnPrimary:active {
+  transform: translateY(0);
+}
+
+/* ── SECONDARY BUTTON ─────────────────────── */
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 32px;
+  background-color: transparent;
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    border-color     var(--transition-fast),
+    background-color var(--transition-fast),
+    transform        var(--transition-fast);
+}
+
+.btnSecondary:hover {
+  border-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(255, 255, 255, 0.07);
+  transform: translateY(-2px);
+}
+
+.btnSecondary:active {
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE ───────────────────────────── */
+
+/* Tablet — stack layout vertically */
+@media (max-width: 860px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+
+  .buttonSide {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: unset;
+  }
+}
+
+/* Mobile — buttons full width */
+@media (max-width: 480px) {
+  .buttonSide {
+    flex-direction: column;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+  }
+
+  .accentTopRight {
+    width: 220px;
+    height: 220px;
+  }
+
+  .accentBottomLeft {
+    width: 160px;
+    height: 160px;
+  }
+}

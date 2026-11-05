@@ -1,0 +1,365 @@
+/* src/sections/home/WhyChooseUs/WhyChooseUs.module.css */
+
+/* ─── Section wrapper ─────────────────────────────────────────── */
+.section {
+  position: relative;
+  background-color: var(--color-navy);
+  /* overflow must be VISIBLE here so position:sticky on .mediaCol works.
+     Clipping of the parallax bg is handled by .parallaxClip instead. */
+}
+
+/* ─── Parallax clip wrapper ───────────────────────────────────── */
+/* overflow:hidden moved here (off .section) so sticky is not broken.
+   This wrapper is position:absolute/inset:0 so it sits behind everything
+   and clips the oversized parallaxBg without affecting stacking context
+   of the content above it. */
+.parallaxClip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* ─── Parallax background layer ──────────────────────────────── */
+/* Parallax is JS-driven (translateY via Framer Motion scroll).
+   The div is slightly taller than 100% so travel never reveals a gap. */
+.parallaxBg {
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 100%;
+  height: 130%;
+  background-color: var(--color-navy);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* ─── Gradient overlay ────────────────────────────────────────── */
+/* Lighter on the left (text stays readable),
+   much darker on the right (cinematic depth over the media card) */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(27, 42, 74, 0.88)  0%,
+    rgba(27, 42, 74, 0.82) 45%,
+    rgba(0,   0,   0, 0.72) 55%,
+    rgba(0,   0,   0, 0.82) 100%
+  );
+  z-index: 1;
+}
+
+/* ─── Inner two-column layout ─────────────────────────────────── */
+/* align-items:start is REQUIRED for position:sticky to work on children.
+   The default (stretch) makes the mediaCol fill the full grid height,
+   which means it never needs to stick — it's already as tall as the grid. */
+.inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  min-height: 680px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+/* ─── LEFT COLUMN — content ───────────────────────────────────── */
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 96px 56px 96px 64px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--color-orange);
+  margin-bottom: 14px;
+}
+
+.heading {
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 3.2vw, 44px);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+
+.heading span {
+  color: var(--color-orange);
+}
+
+.subtext {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  margin: 0 0 40px;
+  max-width: 420px;
+}
+
+/* ─── Reasons list ────────────────────────────────────────────── */
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-bottom: 40px;
+}
+
+/* ─── Single reason row ───────────────────────────────────────── */
+.reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* Circled checkmark container */
+.iconWrap {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
+}
+
+.iconCircle {
+  width: 32px;
+  height: 32px;
+  --circumference: 88; /* 2π × r14 ≈ 87.96 */
+}
+
+/* Circle stroke — draws from 0 to full when .animated is added */
+.circlePath {
+  stroke: #F26522;
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: var(--circumference);
+  stroke-dashoffset: var(--circumference);
+  stroke-linecap: round;
+  transform-origin: center;
+  transform: rotate(-90deg);
+  transition: stroke-dashoffset 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Checkmark stroke — draws after circle completes (0.5s delay) */
+.checkPath {
+  stroke: #F26522;
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+}
+
+.reason.animated .circlePath {
+  stroke-dashoffset: 0;
+}
+
+.reason.animated .checkPath {
+  stroke-dashoffset: 0;
+}
+
+.reasonText {
+  flex: 1;
+}
+
+.reasonTitle {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.reasonDesc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ─── CTA button ──────────────────────────────────────────────── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 13px 28px;
+  align-self: flex-start;
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+
+.cta:hover {
+  border-color: var(--color-orange);
+  color: var(--color-orange);
+  background: rgba(242, 101, 34, 0.06);
+}
+
+.ctaArrow {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.cta:hover .ctaArrow {
+  transform: translateX(3px);
+}
+
+/* ─── RIGHT COLUMN — media column wrapper ─────────────────────── */
+/* position:sticky keeps the card pinned to the viewport as the left
+   content scrolls past. top:80px gives it breathing room from the
+   top edge. It unsticks naturally when the left column's bottom
+   reaches the bottom of the sticky card (CSS handles this automatically).
+   Desktop only — mobile overrides this to display:none. */
+.mediaCol {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 48px 48px 24px;
+  position: sticky;
+  top: 80px;
+  align-self: start;
+}
+
+/* ─── Media card ──────────────────────────────────────────────── */
+/* Fixed height so the card has a defined size when sticky.
+   aspect-ratio alone won't work here since width is percentage-based. */
+.mediaCard {
+  width: 100%;
+  height: 500px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+/* Image fills the card */
+.mediaAsset {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Video fills the card */
+.mediaVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ─── Placeholder card ────────────────────────────────────────── */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+.placeholderIcon {
+  width: 52px;
+  height: 52px;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.placeholderLabel {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.22);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  max-width: 180px;
+  line-height: 1.6;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .inner {
+    min-height: 560px;
+  }
+
+  .content {
+    padding: 72px 32px 72px 40px;
+  }
+
+  .mediaCol {
+    padding: 40px 32px 40px 16px;
+    /* Keep sticky but reduce top offset on smaller viewports */
+    top: 60px;
+  }
+
+  .mediaCard {
+    height: 420px;
+  }
+}
+
+/* Mobile: single column, media hidden */
+@media (max-width: 768px) {
+  .overlay {
+    background: rgba(20, 32, 60, 0.90);
+  }
+
+  .inner {
+    grid-template-columns: 1fr;
+    min-height: unset;
+    /* Restore stretch alignment for single-column layout */
+    align-items: stretch;
+  }
+
+  .content {
+    padding: 72px 24px 80px;
+  }
+
+  .subtext {
+    max-width: 100%;
+  }
+
+  /* Hide media column entirely on mobile — also disable sticky */
+  .mediaCol {
+    display: none;
+    position: static;
+  }
+}

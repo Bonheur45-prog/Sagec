@@ -1,0 +1,244 @@
+/* ── NAVBAR BASE ──────────────────────────── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--navbar-height);
+  z-index: var(--z-navbar);
+  transition:
+    background-color 0.35s ease,
+    box-shadow       0.35s ease,
+    backdrop-filter  0.35s ease;
+  will-change: background-color, box-shadow;
+}
+
+/* Transparent state — over hero */
+.clear {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* Solid state — on scroll or non-hero pages */
+.solid {
+  background-color: var(--color-bg-primary);
+  box-shadow: 0 1px 0 var(--color-border-light), var(--shadow-sm);
+}
+
+/* ── INNER LAYOUT ─────────────────────────── */
+.inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  height: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--section-padding-x);
+  gap: var(--space-6);
+}
+
+/* ── LOGO ─────────────────────────────────── */
+.logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.logoImg {
+  height: 80px;
+  width: auto;
+  transition: filter 0.35s ease;
+  object-fit: contain;
+}
+
+/* ── DESKTOP NAV LINKS ────────────────────── */
+.navLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLink {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+  text-decoration: none;
+}
+
+/* Colour states */
+.navLinkSolid {
+  color: var(--color-text-primary);
+}
+
+.navLinkSolid:hover {
+  color: var(--color-orange);
+}
+
+.navLinkClear {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.navLinkClear:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Active state — orange underline */
+.navLinkActive.navLinkSolid {
+  color: var(--color-orange);
+}
+
+.navLinkActive.navLinkClear {
+  color: #ffffff;
+}
+
+/* Animated underline */
+.navLinkUnderline {
+  position: absolute;
+  bottom: 2px;
+  left: var(--space-3);
+  right: var(--space-3);
+  height: 2px;
+  background-color: var(--color-orange);
+  border-radius: var(--radius-full);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+.navLink:hover .navLinkUnderline,
+.navLinkActive .navLinkUnderline {
+  transform: scaleX(1);
+}
+
+/* ── CTA BUTTON ───────────────────────────── */
+.cta {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 22px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.02em;
+  transition:
+    background-color var(--transition-fast),
+    color            var(--transition-fast),
+    border-color     var(--transition-fast),
+    transform        var(--transition-fast);
+  text-decoration: none;
+}
+
+.cta:active {
+  transform: scale(0.97);
+}
+
+/* Solid CTA — on scrolled/non-hero pages */
+.ctaSolid {
+  background-color: var(--color-orange);
+  color: #ffffff;
+  border: 2px solid var(--color-orange);
+}
+
+.ctaSolid:hover {
+  background-color: var(--color-orange-dark);
+  border-color: var(--color-orange-dark);
+}
+
+/* Clear CTA — on transparent hero navbar */
+.ctaClear {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.ctaClear:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 1);
+}
+
+/* ── HAMBURGER ────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.hamburger:hover {
+  background-color: rgba(27, 42, 74, 0.06);
+}
+
+.bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  transition: background-color 0.35s ease;
+}
+
+.barDark  { background-color: var(--color-navy); }
+.barLight { background-color: #ffffff; }
+
+/* ── RESPONSIVE ───────────────────────────── */
+
+/* Hide desktop links + CTA, show hamburger below 1024px */
+@media (max-width: 1024px) {
+  .navbar {
+    height: var(--navbar-height-mobile);
+  }
+
+  .inner {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .navLinks {
+    display: none;
+  }
+
+  .cta {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+    justify-self: end;
+  }
+
+  .logoImg {
+    height: 34px;
+  }
+}
+
+/* Increase navbar logo on smaller screens for better visibility */
+@media (max-width: 768px) {
+  .logoImg {
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logoImg {
+    height: 60px;
+  }
+}

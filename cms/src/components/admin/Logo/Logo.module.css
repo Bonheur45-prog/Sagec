@@ -1,0 +1,22 @@
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoImage {
+  height: 174px;
+  width: auto;
+  display: block;
+}
+
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconImage {
+  height: 28px;
+  width: auto;
+  display: block;
+}

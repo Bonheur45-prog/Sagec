@@ -1,0 +1,6 @@
+export const blogGridEyebrow = 'News & Insights'
+export const blogGridHeading = 'Read Our Latest Articles'
+export const searchPlaceholder = 'Search here...'
+export const popularPostsLabel = 'Popular Posts'
+export const popularTagsLabel = 'Popular Tags'
+export const noResultsText = 'No articles match your search.'

@@ -1,0 +1,6 @@
+# Cloudflare Pages SPA fallback — without this, a direct visit or
+# refresh on any client-side route (e.g. /projects/some-slug,
+# /blog/some-post) 404s, since there's no matching static file for it.
+# This tells Cloudflare Pages to always serve index.html and let
+# React Router take over from there.
+/* /index.html 200

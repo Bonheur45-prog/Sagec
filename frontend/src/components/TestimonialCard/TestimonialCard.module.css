@@ -1,0 +1,114 @@
+/* ── CARD ─────────────────────────────────── */
+.card {
+  position: relative;
+  background-color: var(--color-bg-primary);
+  padding: var(--space-10);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Border-grow hover: top/bottom sweep left→right, left/right sweep top→bottom */
+.borderTop,
+.borderBottom,
+.borderLeft,
+.borderRight {
+  position: absolute;
+  background-color: var(--color-orange);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.borderTop,
+.borderBottom {
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.borderLeft,
+.borderRight {
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+.borderTop { top: 0; }
+.borderBottom { bottom: 0; }
+.borderLeft { left: 0; }
+.borderRight { right: 0; }
+
+.card:hover .borderTop,
+.card:hover .borderBottom {
+  transform: scaleX(1);
+}
+
+.card:hover .borderLeft,
+.card:hover .borderRight {
+  transform: scaleY(1);
+}
+
+/* ── CARD CONTENT ─────────────────────────── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: var(--color-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.initials {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-navy);
+}
+
+.identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  line-height: 1.3;
+}
+
+.role {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.quoteIcon {
+  color: var(--color-border-mid);
+  flex-shrink: 0;
+}
+
+.quoteText {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--color-text-body);
+  line-height: 1.7;
+}

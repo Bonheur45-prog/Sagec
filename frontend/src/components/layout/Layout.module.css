@@ -1,0 +1,23 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  /* On non-hero pages, push content below the fixed navbar */
+  padding-top: var(--navbar-height);
+}
+
+/* Hero pages: no top padding — hero fills full viewport,
+   navbar sits transparently on top of it */
+.mainHero {
+  padding-top: 0;
+}
+
+@media (max-width: 1024px) {
+  .main {
+    padding-top: var(--navbar-height-mobile);
+  }
+}

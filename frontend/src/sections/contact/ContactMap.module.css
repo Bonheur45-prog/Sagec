@@ -1,0 +1,118 @@
+/* ── SECTION ──────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── LABEL STRIP ──────────────────────────── */
+.strip {
+  background-color: var(--color-navy);
+  padding-block: var(--space-4);
+  padding-inline: var(--section-padding-x);
+}
+
+.stripInner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+.stripPin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stripText {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.02em;
+}
+
+/* ── MAP WRAPPER ──────────────────────────── */
+.mapWrapper {
+  position: relative;
+  width: 100%;
+  height: 460px;
+}
+
+/* ── MAP IFRAME ───────────────────────────── */
+.map {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: grayscale(20%) contrast(1.05);
+}
+
+/* ── MAP OVERLAY CARD ─────────────────────── */
+.mapCard {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--section-padding-x);
+  background-color: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 220px;
+  border-left: 3px solid var(--color-orange);
+}
+
+.mapCardTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.mapCardSub {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.mapCardDivider {
+  width: 32px;
+  height: 2px;
+  background-color: var(--color-orange);
+  border-radius: var(--radius-full);
+  margin-block: var(--space-1);
+  opacity: 0.6;
+}
+
+.mapCardLink {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-orange);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.mapCardLink:hover { color: var(--color-orange-dark); }
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 768px) {
+  .mapWrapper { height: 360px; }
+
+  .mapCard {
+    top: var(--space-5);
+    left: var(--space-4);
+    right: var(--space-4);
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .mapWrapper { height: 300px; }
+}
