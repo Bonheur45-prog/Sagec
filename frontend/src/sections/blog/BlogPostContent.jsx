@@ -94,7 +94,7 @@ function ContentBlock({ block }) {
 // ── COMMENT FORM (live) ────────────────────────────────────
 function CommentForm({ postId }) {
   const copy = useBlogCopy('post')
-  const [form, setForm] = useState({ name: '', email: '', website: '', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', website: '', message: '', hp: '' })
   const { mutate, isPending } = useSubmitComment(postId)
 
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }))
@@ -102,14 +102,25 @@ function CommentForm({ postId }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     mutate(
-      { name: form.name, email: form.email, website: form.website, text: form.message },
-      { onSuccess: () => setForm({ name: '', email: '', website: '', message: '' }) },
+      { name: form.name, email: form.email, website: form.website, text: form.message, hp: form.hp },
+      { onSuccess: () => setForm({ name: '', email: '', website: '', message: '', hp: '' }) },
     )
   }
 
   return (
     <form className={styles.commentForm} onSubmit={handleSubmit}>
       <h4 className={styles.commentFormTitle}>{copy.leaveCommentLabel}</h4>
+      {/* Spam trap — hidden from real visitors, see .hp-field in globals.css */}
+      <input
+        type="text"
+        name="hp"
+        className="hp-field"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={form.hp}
+        onChange={handleChange('hp')}
+      />
       <div className={styles.formRow}>
         <input
           type="text"

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { honeypotField } from '../fields/honeypot'
 
 /**
  * Messages sent through the website's contact form. The form also sends
@@ -22,6 +23,7 @@ export const ContactSubmissions: CollectionConfig = {
     delete: ({ req }) => Boolean(req.user),
   },
   fields: [
+    honeypotField,
     { name: 'name', type: 'text', required: true, maxLength: 200 },
     { name: 'email', type: 'email', required: true },
     { name: 'phone', type: 'text', maxLength: 50 },

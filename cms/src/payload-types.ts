@@ -156,11 +156,14 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * People who can sign in to this CMS. Add a new person with "Create New".
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -484,6 +487,7 @@ export interface BlogPost {
  */
 export interface BlogComment {
   id: string;
+  hp?: string | null;
   post: string | BlogPost;
   name: string;
   email: string;
@@ -530,6 +534,7 @@ export interface Partner {
  */
 export interface ContactSubmission {
   id: string;
+  hp?: string | null;
   name: string;
   email: string;
   phone?: string | null;
@@ -656,6 +661,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -896,6 +902,7 @@ export interface BlogPostsSelect<T extends boolean = true> {
  * via the `definition` "blog-comments_select".
  */
 export interface BlogCommentsSelect<T extends boolean = true> {
+  hp?: T;
   post?: T;
   name?: T;
   email?: T;
@@ -923,6 +930,7 @@ export interface PartnersSelect<T extends boolean = true> {
  * via the `definition` "contact-submissions_select".
  */
 export interface ContactSubmissionsSelect<T extends boolean = true> {
+  hp?: T;
   name?: T;
   email?: T;
   phone?: T;

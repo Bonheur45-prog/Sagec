@@ -157,13 +157,18 @@ export default function ContactMain() {
         organisation: category === 'company' ? formData.organisation : undefined,
         subject: formData.subject,
         message: formData.message,
+        hp: formData.hp,
       }),
-      emailjs.sendForm(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        formRef.current,
-        { publicKey: EMAILJS_PUBLIC_KEY }
-      ),
+      // A filled spam trap means a bot: skip the email entirely. The CMS
+      // rejects the saved copy too, so the visitor sees the error state.
+      formData.hp
+        ? Promise.reject(new Error('spam'))
+        : emailjs.sendForm(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID,
+            formRef.current,
+            { publicKey: EMAILJS_PUBLIC_KEY }
+          ),
     ])
 
     try {
@@ -216,6 +221,16 @@ export default function ContactMain() {
 
             {/* Hidden field for category */}
             <input type="hidden" name="category" value={category} />
+            {/* Spam trap — hidden from real visitors, see .hp-field in globals.css */}
+            <input
+              type="text"
+              name="hp"
+              className="hp-field"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              defaultValue=""
+            />
 
             {/* Name row */}
             <div className={styles.fieldRow}>
