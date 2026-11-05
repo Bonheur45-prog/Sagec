@@ -14,10 +14,10 @@ import { prisma } from '@/lib/db';
 // Create / save / trash / restore / delete for services, projects, testimonials, partners and job openings.
 // Every change refreshes the public site; slug renames leave a redirect behind so old links keep working.
 
-export type Kind = 'services' | 'projects' | 'testimonials' | 'partners' | 'jobs';
+export type Kind = 'services' | 'projects' | 'testimonials' | 'partners' | 'jobs' | 'posts';
 export type EntityFormState = { status: 'idle' } | { status: 'saved'; savedAt: number } | { status: 'error'; message: string; errors: Errors };
 
-const KINDS: Kind[] = ['services', 'projects', 'testimonials', 'partners', 'jobs'];
+const KINDS: Kind[] = ['services', 'projects', 'testimonials', 'partners', 'jobs', 'posts'];
 const ID = /^[a-z0-9]{10,40}$/;
 const fail = (errors: Errors, message = 'Some fields need attention.'): EntityFormState => ({ status: 'error', message, errors });
 /** Public addresses of the collections that have their own pages. */
@@ -59,13 +59,15 @@ async function nextOrder(kind: Kind): Promise<number> {
           ? await prisma.testimonial.aggregate({ _max: { sortOrder: true } })
           : kind === 'partners'
             ? await prisma.partner.aggregate({ _max: { sortOrder: true } })
-            : await prisma.job.aggregate({ _max: { sortOrder: true } });
+            : kind === 'jobs'
+              ? await prisma.job.aggregate({ _max: { sortOrder: true } })
+              : { _max: { sortOrder: 0 } };
   return (agg._max.sortOrder ?? 0) + 10;
 }
 
 export async function createEntity(kind: Kind, formData: FormData) {
   const user = await requireUser();
-  if (!KINDS.includes(kind)) redirect('/admin');
+  if (!KINDS.includes(kind) || kind === 'posts') redirect('/admin'); // articles: createPost in blog/actions.ts
   const name = String(formData.get('name') ?? '').trim().slice(0, 120);
   if (!name) redirect(`/admin/${kind}?error=missing-title`);
   const sortOrder = await nextOrder(kind);
@@ -174,7 +176,7 @@ export async function saveJob(id: string, _s: EntityFormState, formData: FormDat
 
 function model(kind: Kind) {
   // The models share id + status + deletedAt, which is all the trash needs.
-  const m = { services: prisma.service, projects: prisma.project, testimonials: prisma.testimonial, partners: prisma.partner, jobs: prisma.job }[kind];
+  const m = { services: prisma.service, projects: prisma.project, testimonials: prisma.testimonial, partners: prisma.partner, jobs: prisma.job, posts: prisma.post }[kind];
   return m as unknown as {
     updateMany(args: { where: { id: string }; data: { deletedAt: Date | null; status?: 'DRAFT'; featured?: false } }): Promise<unknown>;
     deleteMany(args: { where: { id: string; deletedAt: { not: null } } }): Promise<{ count: number }>;
@@ -188,7 +190,7 @@ export async function trashEntity(kind: Kind, id: string) {
   await model(kind).updateMany({ where: { id }, data: { deletedAt: new Date(), ...(kind === 'projects' && { featured: false as const }) } });
   await audit(user.id, `${kind}.trash`, kind, id);
   refreshPublicSite();
-  redirect(`/admin/${kind}?notice=trashed`);
+  redirect(`/admin/${kind === 'posts' ? 'blog' : kind}?notice=trashed`);
 }
 
 export async function restoreEntity(kind: Kind, id: string) {

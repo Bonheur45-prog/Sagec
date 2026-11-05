@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { AdminShell } from '@/components/admin/AdminShell/AdminShell';
 import { requireUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db';
 import { getSiteSettings } from '@/lib/settings';
 import { logout } from '../actions';
 
@@ -8,10 +9,14 @@ import { logout } from '../actions';
 // because they can be called directly without loading this layout.
 export default async function CmsLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
-  const settings = await getSiteSettings();
+  const [settings, messages, comments] = await Promise.all([
+    getSiteSettings(),
+    prisma.lead.count({ where: { status: 'NEW' } }),
+    prisma.blogComment.count({ where: { approved: false } }),
+  ]);
 
   return (
-    <AdminShell businessName={settings.businessName} user={user} logoutAction={logout}>
+    <AdminShell businessName={settings.businessName} user={user} counts={{ messages, comments }} logoutAction={logout}>
       {children}
     </AdminShell>
   );

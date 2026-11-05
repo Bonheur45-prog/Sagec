@@ -14,12 +14,11 @@ Each phase is one pull request. Web CI (`.github/workflows/web-ci.yml`) must be 
 |---|---|---|
 | 1 | Foundation: schema, login, users, activity log, R2 media library, SAGEC-branded admin shell, CI | done (PR #3) |
 | 2 | Site settings (company, contact, socials, logos, SEO defaults, **Google Analytics**, Search Console, fonts, parallax/smooth-scroll), header and footer editors with draft → publish → version history | done (PR #4) |
-| 3a | Collections: services, projects (+ gallery, linked services, featured), testimonials, partners, job openings, trash, slug redirects | **this PR** |
-| 3b | Messages inbox (+ email notification, Turnstile, rate limit, CSV export) | |
-| 4 | Page builder: SAGEC section catalogue built from the existing site's sections (incl. the home page stats), layouts, backgrounds, SEO panel, draft/publish, versions | |
-| 5 | Blog: categories, tags, authors, Tiptap editor, scheduling, comment moderation, SEO assistant, RSS | |
-| 6 | Public site ported from `frontend/` into Next.js and drawn from the CMS: real share previews, sitemap, canonical addresses, Google Analytics on public pages | |
-| 7 | Content import from the old Atlas database + local images → PostgreSQL + R2, deploy (Caddy block, PM2, GitHub Actions releases, nightly backup), remove `cms/` and `frontend/` | |
+| 3a | Collections: services, projects (+ gallery, linked services, featured), testimonials, partners, job openings, trash, slug redirects | done (PR #5) |
+| 3b + 5 | Messages inbox (+ email, Turnstile, rate limit, CSV), blog (categories, authors, Tiptap editor, scheduling, SEO assistant, comments), subscribers, public form handlers | **PR 6 (this PR)** |
+| 6 | Public site in Next.js with editable page texts | PR 7 |
+| 7 | Import + deploy | PR 8 — **live** |
+| 4 | Page builder extras: add / reorder / hide / restyle sections | after launch |
 
 ## What Phase 1 added
 - `prisma/schema.prisma` + `prisma/migrations/…_init`: users, sessions, media assets (one `alt` field), activity log.
@@ -86,6 +85,30 @@ and a linked service · featuring a second project un-features the first · two 
 addresses redirect straight to the newest · photo in use cannot be trashed · job Open/Closed wording · partner
 needs a logo · trash → restore as draft → delete for good (photos kept) · activity log.
 
+## What PR 6 added (Phase 3b + blog)
+- **Messages** (`/admin/messages`): every contact message is saved first, then emailed to the Notification email
+  (Reply-To = the visitor). The result is on each message: emailed, or the reason it was not (email not set up,
+  server unreachable…). Status New / Contacted / Closed, delete, reply/call links, **CSV export** (formula-safe).
+  Sidebar and dashboard show the number of new messages.
+- **Public form handlers** (`src/lib/forms.ts`): contact (SAGEC's fields: first/last name, personal/company,
+  organisation, subject), blog comments, newsletter. Hidden-field trap, per-visitor limits, Cloudflare Turnstile
+  when its keys are set, and "sent" only once saved. The public pages are connected to them in PR 7.
+- **Blog** (`/admin/blog`): categories (SAGEC's 8 added in one click), authors (name, role, bio, photo, socials),
+  articles with BrightLink's **Tiptap editor** (headings, lists, quotes, code, note boxes, tables, photos from the
+  library with captions, alignment, SAGEC colours, fonts), summary, cover, tags, featured, **scheduling**, **SEO
+  assistant** with Google preview, share image, canonical, hide-from-Google. The HTML visitors get is rendered on
+  save with a strict whitelist. Address renames redirect. Articles go to Trash.
+- **Comments** (`/admin/comments`): waiting / approved, approve, hide, delete. Email never shown publicly.
+- **Subscribers** (`/admin/subscribers`) with CSV export.
+- Dashboard warns when email (SMTP) or spam protection (Turnstile) is not set up.
+
+## Verified (PR 6)
+Same sandbox: typecheck · lint · 41 unit tests · **a real email sent** through an SMTP server to the Site settings
+address with Reply-To = visitor, and both failure cases recorded on the message · in Chrome, 22 checks: SAGEC's
+categories in one click, author, Tiptap editor writing a heading/bold/list, publish refused then published, saved
+HTML and table of contents, SEO assistant, scheduled article, comment approval, inbox with SAGEC's fields and the
+"not emailed" note, status change, CSV export (and 401 without login), article to Trash.
+
 ## Verified (Phase 1)
 In the sandbox, against PostgreSQL 16 and an S3 emulator standing in for R2, on the production build
 (standalone server, as on the VPS):
@@ -96,6 +119,8 @@ upload (4 WebP sizes stored), description saved and kept after reload, second us
 both, logout locks the CMS, no JavaScript errors, phone layout.
 
 ## Not tested — check these yourself
+- **Real SMTP (Gmail/Brevo) and Turnstile keys**: send yourself a message from the live contact form.
+- **PostgreSQL time zone on the VPS must be UTC** (timestamps are stored without a zone).
 - **A real Google Analytics property**: after launch, open the site and check Realtime in Google Analytics.
 - **Real Cloudflare R2** (only an emulator): upload, the public address, the CORS rule for video uploads.
 - **Video upload** (needs the R2 CORS rule; not exercised against the emulator).

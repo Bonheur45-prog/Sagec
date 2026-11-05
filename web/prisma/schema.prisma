@@ -11,6 +11,7 @@
 // Phase 1: users, sessions, media library, activity log.
 // Phase 2: site settings, header/footer (draft → publish), version history.
 // Phase 3a: services, projects (+ gallery), testimonials, partners, job openings, redirects.
+// PR 6: blog (categories, authors, posts, comments), contact messages, newsletter subscribers.
 
 generator client {
   provider        = "prisma-client-js"
@@ -40,6 +41,12 @@ enum PublishStatus {
 enum ProjectState {
   COMPLETED
   IN_PROGRESS
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
 }
 
 // ───────────────────────── Users ─────────────────────────
@@ -170,6 +177,8 @@ model MediaAsset {
   projectGallery     ProjectMedia[]
   testimonialAvatars Testimonial[] @relation("TestimonialAvatar")
   partnerLogos       Partner[]     @relation("PartnerLogo")
+  postCovers         Post[]        @relation("PostCover")
+  authorAvatars      BlogAuthor[]  @relation("AuthorAvatar")
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -314,6 +323,123 @@ model Job {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   deletedAt    DateTime?
+}
+
+// ───────────────────────── Blog ─────────────────────────
+
+model BlogCategory {
+  id              String @id @default(cuid())
+  slug            String @unique
+  name            String
+  description     String @default("")
+  metaTitle       String @default("")
+  metaDescription String @default("")
+  sortOrder       Int    @default(0)
+
+  posts Post[]
+}
+
+/// Who wrote an article (shown with the article). Not a CMS login.
+model BlogAuthor {
+  id            String  @id @default(cuid())
+  name          String
+  role          String  @default("")
+  bio           String  @default("")
+  avatarMediaId String?
+  /// [{ "platform": "linkedin", "url": "https://…" }]
+  socials       Json    @default("[]")
+  sortOrder     Int     @default(0)
+
+  avatarMedia MediaAsset? @relation("AuthorAvatar", fields: [avatarMediaId], references: [id], onDelete: SetNull)
+  posts       Post[]
+}
+
+model Post {
+  id              String        @id @default(cuid())
+  slug            String        @unique
+  status          PublishStatus @default(DRAFT)
+  title           String
+  excerpt         String        @default("")
+  /// The editor's document (Tiptap JSON). Only the admin ever reads this.
+  doc             Json          @default("{}")
+  /// Clean HTML rendered from `doc` when the post is saved, so visitors never download the editor.
+  html            String        @default("") @db.Text
+  /// [{ "id": "why-it-matters", "text": "Why it matters", "level": 2 }]
+  toc             Json          @default("[]")
+  /// Font keys the article uses (src/lib/fonts.ts): only these are downloaded on the post's page.
+  fonts           String[]      @default([])
+  categoryId      String
+  authorId        String? // empty = "SAGEC Team"
+  coverMediaId    String?
+  tags            String[]      @default([])
+  featured        Boolean       @default(false)
+  readingMinutes  Int           @default(1)
+  focusKeyword    String        @default("")
+  metaTitle       String        @default("")
+  metaDescription String        @default("")
+  ogMediaId       String?
+  canonicalUrl    String        @default("")
+  noIndex         Boolean       @default(false)
+  /// Set when first published. A date in the future means "scheduled": hidden until then.
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+
+  category   BlogCategory  @relation(fields: [categoryId], references: [id])
+  author     BlogAuthor?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  coverMedia MediaAsset?   @relation("PostCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  comments   BlogComment[]
+
+  @@index([status, publishedAt])
+}
+
+/// Visitors' comments. Hidden until approved in CMS → Comments.
+model BlogComment {
+  id        String   @id @default(cuid())
+  postId    String
+  name      String
+  email     String // never shown on the website
+  website   String   @default("")
+  text      String   @db.Text
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, approved])
+  @@index([approved, createdAt])
+}
+
+// ───────────────────────── Messages and subscribers ─────────────────────────
+
+/// A message from the contact form. Saved first, then emailed to the team.
+model Lead {
+  id           String     @id @default(cuid())
+  status       LeadStatus @default(NEW)
+  name         String
+  email        String
+  phone        String     @default("")
+  /// "personal" or "company" (the contact form's choice)
+  category     String     @default("personal")
+  organisation String     @default("")
+  subject      String     @default("")
+  message      String     @default("") @db.Text
+  source       String     @default("") // which form or page it came from
+  userAgent    String?
+  notifiedAt   DateTime? // set when the notification email was sent
+  notifyError  String? // set when sending failed, so nothing is silently lost
+  createdAt    DateTime   @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 /// Old address → new address. Created when a service or project address (slug) is renamed,
