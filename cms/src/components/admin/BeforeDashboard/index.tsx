@@ -5,10 +5,6 @@ import styles from './BeforeDashboard.module.css'
 /**
  * Renders above the default Dashboard content.
  * Registered in payload.config.ts as admin.components.beforeDashboard: ['/components/admin/BeforeDashboard#BeforeDashboard']
- *
- * NOTE: `logo.png` is still Royal Ventures' logo file (placeholder,
- * per your instruction) — swap in SAGEC's actual logo file at that
- * same path when it's ready.
  */
 export function BeforeDashboard() {
   return (

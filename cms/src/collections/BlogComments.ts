@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { honeypotField } from '../fields/honeypot'
 
 export const BlogComments: CollectionConfig = {
   slug: 'blog-comments',
@@ -25,6 +26,7 @@ export const BlogComments: CollectionConfig = {
     delete: ({ req }) => Boolean(req.user),
   },
   fields: [
+    honeypotField,
     {
       name: 'post',
       type: 'relationship',

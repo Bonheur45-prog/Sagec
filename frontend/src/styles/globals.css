@@ -155,3 +155,15 @@ input, textarea, select {
   background-color: var(--color-orange-light);
   color: var(--color-navy);
 }
+
+/* Spam-trap input on public forms — invisible and unreachable for real
+   visitors (not display:none, which some bots detect). See the CMS's
+   src/fields/honeypot.ts for the server-side check. */
+.hp-field {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
