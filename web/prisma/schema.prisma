@@ -1,0 +1,108 @@
+// SAGEC Ltd — database schema (PostgreSQL)
+//
+// Conventions (same as the BrightLink and Oak Elite Home CMSs, minus languages)
+// - SAGEC is English only: text lives directly on each row, there are no *Translation tables.
+// - Page layouts are stored as JSON (an ordered list of section blocks) so reordering,
+//   draft/publish and version history stay simple. Block shapes are validated in code. (Phase 4)
+// - Nothing the editor may want to change (phone, address, analytics ID...) is hardcoded: it lives
+//   in SiteSettings. (Phase 2)
+//
+// Built in phases: each phase adds its tables with its own migration (npm run db:migrate).
+// Phase 1 (this file): users, sessions, media library, activity log.
+
+generator client {
+  provider        = "prisma-client-js"
+  // Rust-free client: queries are compiled in JavaScript and sent through the pg driver (src/lib/db.ts).
+  // No native query-engine process: less memory on the VPS, and nothing extra to download at install.
+  engineType      = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────── Enums ─────────────────────────
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+}
+
+// ───────────────────────── Users ─────────────────────────
+
+/// One role: every user can manage everything. Safety net = soft delete + version history + audit log.
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+
+  sessions Session[]
+  uploads  MediaAsset[]
+  audit    AuditLog[]
+}
+
+/// A logged-in browser. Only the SHA-256 hash of the cookie token is stored.
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ───────────────────────── Media (Cloudflare R2) ─────────────────────────
+
+/// A file stored in Cloudflare R2. Photos are stored as WebP in several widths (`variants`) so the
+/// browser downloads a size that fits its screen; width/height and a blur placeholder are captured at
+/// upload so layouts never jump.
+model MediaAsset {
+  id           String    @id @default(cuid())
+  kind         MediaKind
+  objectKey    String    @unique // the largest stored version
+  mimeType     String
+  sizeBytes    Int
+  width        Int
+  height       Int
+  /// Smaller copies of a photo: [{ "w": 480, "key": "uploads/2026/11/abc-480.webp", "h": 270 }]
+  variants     Json      @default("[]")
+  durationSec  Int? // videos only
+  blurDataUrl  String?   @db.Text
+  posterKey    String? // video poster image key
+  /// What the picture shows, for screen readers and Google.
+  alt          String    @default("")
+  uploadedById String?
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime? // soft delete: the files are only purged from R2 when removed from the trash
+
+  uploadedBy User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+// ───────────────────────── Activity log ─────────────────────────
+
+/// Who changed what, shown in CMS → Activity.
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String // "media.upload", "user.create", ...
+  entityType String
+  entityId   String
+  meta       Json     @default("{}")
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
