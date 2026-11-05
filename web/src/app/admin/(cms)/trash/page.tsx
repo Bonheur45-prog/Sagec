@@ -16,12 +16,13 @@ const when = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeZone: '
 export default async function TrashPage({ searchParams }: { searchParams: Search }) {
   await requireUser();
   const trashed = { deletedAt: { not: null } };
-  const [services, projects, testimonials, partners, jobs] = await Promise.all([
+  const [services, projects, testimonials, partners, jobs, posts] = await Promise.all([
     prisma.service.findMany({ where: trashed, select: { id: true, title: true, deletedAt: true } }),
     prisma.project.findMany({ where: trashed, select: { id: true, title: true, deletedAt: true } }),
     prisma.testimonial.findMany({ where: trashed, select: { id: true, name: true, deletedAt: true } }),
     prisma.partner.findMany({ where: trashed, select: { id: true, name: true, deletedAt: true } }),
     prisma.job.findMany({ where: trashed, select: { id: true, title: true, deletedAt: true } }),
+    prisma.post.findMany({ where: trashed, select: { id: true, title: true, deletedAt: true } }),
   ]);
   const rows: { kind: Kind; label: string; id: string; title: string; at: Date }[] = [
     ...services.map((r) => ({ kind: 'services' as const, label: 'Service', id: r.id, title: r.title, at: r.deletedAt! })),
@@ -29,12 +30,13 @@ export default async function TrashPage({ searchParams }: { searchParams: Search
     ...testimonials.map((r) => ({ kind: 'testimonials' as const, label: 'Testimonial', id: r.id, title: r.name, at: r.deletedAt! })),
     ...partners.map((r) => ({ kind: 'partners' as const, label: 'Partner', id: r.id, title: r.name, at: r.deletedAt! })),
     ...jobs.map((r) => ({ kind: 'jobs' as const, label: 'Job opening', id: r.id, title: r.title, at: r.deletedAt! })),
+    ...posts.map((r) => ({ kind: 'posts' as const, label: 'Article', id: r.id, title: r.title, at: r.deletedAt! })),
   ].sort((a, b) => b.at.getTime() - a.at.getTime());
   const { notice } = noticeFrom(await searchParams);
 
   return (
     <>
-      <PageHeader title="Trash" description="Services, projects, testimonials, partners and job openings you removed. Restored items come back as drafts. Photos and videos have their own trash in the Media library." />
+      <PageHeader title="Trash" description="Services, projects, testimonials, partners, job openings and articles you removed. Restored items come back as drafts. Photos and videos have their own trash in the Media library." />
       {notice && <Notice tone="success">{notice}</Notice>}
       {rows.length === 0 ? (
         <EmptyState title="The trash is empty." />
