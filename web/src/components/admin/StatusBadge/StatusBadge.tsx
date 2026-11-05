@@ -10,7 +10,8 @@ const LABELS: Record<string, { text: string; tone: 'success' | 'muted' | 'warnin
   DELETED: { text: 'In trash', tone: 'danger' },
 };
 
-export function StatusBadge({ status }: { status: string }) {
+/** `label` replaces the usual word (e.g. job openings: Open / Closed) but keeps the colour. */
+export function StatusBadge({ status, label: text }: { status: string; label?: string }) {
   const label = LABELS[status] ?? { text: status, tone: 'muted' as const };
-  return <span className={`${styles.badge} ${styles[label.tone]}`}>{label.text}</span>;
+  return <span className={`${styles.badge} ${styles[label.tone]}`}>{text ?? label.text}</span>;
 }

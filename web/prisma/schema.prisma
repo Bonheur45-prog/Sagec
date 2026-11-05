@@ -10,6 +10,7 @@
 // Built in phases: each phase adds its tables with its own migration (npm run db:migrate).
 // Phase 1: users, sessions, media library, activity log.
 // Phase 2: site settings, header/footer (draft → publish), version history.
+// Phase 3a: services, projects (+ gallery), testimonials, partners, job openings, redirects.
 
 generator client {
   provider        = "prisma-client-js"
@@ -28,6 +29,17 @@ datasource db {
 enum MediaKind {
   IMAGE
   VIDEO
+}
+
+/// Draft = hidden from the website. For job openings: Published = open, Draft = closed.
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ProjectState {
+  COMPLETED
+  IN_PROGRESS
 }
 
 // ───────────────────────── Users ─────────────────────────
@@ -151,8 +163,167 @@ model MediaAsset {
 
   uploadedBy User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
 
+  serviceCovers      Service[]     @relation("ServiceCover")
+  serviceDetails     Service[]     @relation("ServiceDetail")
+  projectCovers      Project[]     @relation("ProjectCover")
+  projectFeatures    Project[]     @relation("ProjectFeatured")
+  projectGallery     ProjectMedia[]
+  testimonialAvatars Testimonial[] @relation("TestimonialAvatar")
+  partnerLogos       Partner[]     @relation("PartnerLogo")
+
   @@index([createdAt])
   @@index([deletedAt])
+}
+
+// ───────────────────────── Content collections ─────────────────────────
+// Every collection: status (draft/published), sortOrder (lower first) and deletedAt (trash).
+
+model Service {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  status           PublishStatus @default(DRAFT)
+  title            String
+  shortDescription String        @default("") // cards and the services list
+  /// Key of the icon shown on cards: architecture, structure, mep, management, construction, interior
+  icon             String        @default("")
+  /// What SAGEC delivers for this service, one item per entry: ["Concept design", ...]
+  deliverables     Json          @default("[]")
+  coverMediaId     String? // card photo
+  detailMediaId    String? // large photo on the service's own page (empty = the card photo)
+  showOnHome       Boolean       @default(true)
+  sortOrder        Int           @default(0)
+  metaTitle        String        @default("")
+  metaDescription  String        @default("")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+
+  coverMedia  MediaAsset?      @relation("ServiceCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  detailMedia MediaAsset?      @relation("ServiceDetail", fields: [detailMediaId], references: [id], onDelete: SetNull)
+  projects    ProjectService[]
+
+  @@index([status, deletedAt, sortOrder])
+}
+
+model Project {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  status           PublishStatus @default(DRAFT)
+  title            String
+  /// One of PROJECT_CATEGORIES (src/lib/cms/collections-validation.ts), e.g. "Commercial"
+  category         String        @default("")
+  state            ProjectState  @default(COMPLETED)
+  progress         Int           @default(100) // 0–100; 100 for completed projects
+  year             String        @default("") // "2024", or "2023–2025"
+  location         String        @default("")
+  client           String        @default("")
+  area             String        @default("") // e.g. "12,000 m²"
+  shortDescription String        @default("") // cards
+  /// The project page text, one paragraph per entry
+  paragraphs       Json          @default("[]")
+  /// Key facts shown as a list, one per entry
+  highlights       Json          @default("[]")
+  /// The one project shown big at the top of the Projects page (only one at a time)
+  featured         Boolean       @default(false)
+  showOnHome       Boolean       @default(true)
+  sortOrder        Int           @default(0)
+  coverMediaId     String? // card photo
+  featuredMediaId  String? // wide photo for the project page hero (empty = the cover)
+  metaTitle        String        @default("")
+  metaDescription  String        @default("")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+
+  coverMedia    MediaAsset?      @relation("ProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  featuredMedia MediaAsset?      @relation("ProjectFeatured", fields: [featuredMediaId], references: [id], onDelete: SetNull)
+  gallery       ProjectMedia[]
+  services      ProjectService[]
+
+  @@index([status, deletedAt, sortOrder])
+}
+
+/// Ordered gallery of a project.
+model ProjectMedia {
+  projectId String
+  mediaId   String
+  position  Int
+
+  project Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  media   MediaAsset @relation(fields: [mediaId], references: [id])
+
+  @@id([projectId, mediaId])
+  @@index([mediaId])
+}
+
+/// Which services a project used (a project can use several).
+model ProjectService {
+  projectId String
+  serviceId String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, serviceId])
+  @@index([serviceId])
+}
+
+model Testimonial {
+  id             String        @id @default(cuid())
+  name           String
+  role           String        @default("") // e.g. "CEO, Kigali Commercial Ventures"
+  quote          String        @default("")
+  avatarMediaId  String? // empty = initials
+  status         PublishStatus @default(DRAFT)
+  showOnHome     Boolean       @default(true)
+  sortOrder      Int           @default(0)
+  createdAt      DateTime      @default(now())
+  deletedAt      DateTime?
+
+  avatarMedia MediaAsset? @relation("TestimonialAvatar", fields: [avatarMediaId], references: [id], onDelete: SetNull)
+}
+
+/// Partner and client logos (the strip on the home page).
+model Partner {
+  id          String        @id @default(cuid())
+  name        String
+  website     String        @default("")
+  logoMediaId String?
+  status      PublishStatus @default(DRAFT)
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  deletedAt   DateTime?
+
+  logoMedia MediaAsset? @relation("PartnerLogo", fields: [logoMediaId], references: [id], onDelete: SetNull)
+}
+
+/// Careers page. Published = open (on the website), Draft = closed (hidden, kept to reopen later).
+model Job {
+  id           String        @id @default(cuid())
+  title        String
+  department   String        @default("") // one of JOB_DEPARTMENTS
+  type         String        @default("Full-time") // one of JOB_TYPES
+  location     String        @default("Kigali, Rwanda")
+  description  String        @default("")
+  /// One requirement per entry
+  requirements Json          @default("[]")
+  applyEmail   String        @default("") // empty = Careers default, then the public email
+  applyLink    String        @default("")
+  status       PublishStatus @default(DRAFT)
+  sortOrder    Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+}
+
+/// Old address → new address. Created when a service or project address (slug) is renamed,
+/// so links already shared keep working.
+model Redirect {
+  id        String   @id @default(cuid())
+  fromPath  String   @unique // "/projects/old-slug"
+  toPath    String
+  permanent Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 // ───────────────────────── Activity log ─────────────────────────
