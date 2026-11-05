@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styles from './StatCard.module.css';
 
-type Props = { label: string; value: number; href?: string; note?: string; highlight?: boolean };
+type Props = { label: string; value: number | string; href?: string; note?: string; highlight?: boolean };
 
 /** One number with a label; links to the list it counts. */
 export function StatCard({ label, value, href, note, highlight }: Props) {

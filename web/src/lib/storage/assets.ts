@@ -112,15 +112,21 @@ export async function createVideoAsset(v: NewVideo): Promise<AdminMedia> {
 // ───────────── Where is a file used? ─────────────
 
 /**
- * Names of the places that use a file, e.g. ["Home page", "Project: silverback-mall"]. Empty = unused.
- * A file still in use cannot be moved to the trash.
- *
- * Phase 1 has no content tables yet, so nothing can use a file. Each later phase adds its own
- * references here (site settings logos, pages, services, projects, blog posts…).
+ * Names of the places that use a file, e.g. ["Site settings", "Project: silverback-mall"]. Empty = unused.
+ * A file still in use cannot be moved to the trash. Each phase adds the references it creates
+ * (Phase 3: services, projects…; Phase 4: pages; Phase 5: blog posts).
  */
 export async function mediaUsage(id: string): Promise<string[]> {
-  void id;
-  return [];
+  const like = `%${id}%`;
+  const [settings, globals] = await Promise.all([
+    prisma.siteSettings.count({ where: { OR: [{ logoMediaId: id }, { logoLightMediaId: id }, { defaultOgMediaId: id }] } }),
+    // The header and footer keep ids inside JSON, so those are found by text search.
+    prisma.$queryRaw<{ key: string }[]>`SELECT key FROM "GlobalSection" WHERE draft::text LIKE ${like} OR published::text LIKE ${like}`,
+  ]);
+  const uses: string[] = [];
+  if (settings) uses.push('Site settings');
+  for (const g of globals) uses.push(`Site-wide: ${g.key}`);
+  return uses;
 }
 
 // ───────────── Library queries ─────────────

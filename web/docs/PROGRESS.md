@@ -12,8 +12,8 @@ Each phase is one pull request. Web CI (`.github/workflows/web-ci.yml`) must be 
 
 | # | Phase | Status |
 |---|---|---|
-| 1 | Foundation: schema, login, users, activity log, R2 media library, SAGEC-branded admin shell, CI | **this PR** |
-| 2 | Site settings (company, contact, socials, logos, SEO defaults, **Google Analytics**, Search Console, fonts, parallax/smooth-scroll), header and footer editors with draft → publish → version history | |
+| 1 | Foundation: schema, login, users, activity log, R2 media library, SAGEC-branded admin shell, CI | done (PR #3) |
+| 2 | Site settings (company, contact, socials, logos, SEO defaults, **Google Analytics**, Search Console, fonts, parallax/smooth-scroll), header and footer editors with draft → publish → version history | **this PR** |
 | 3 | Collections: services, projects (+ gallery), testimonials, partners, stats, job openings, messages (+ email notification, Turnstile, rate limit, CSV export), trash, slug redirects | |
 | 4 | Page builder: SAGEC section catalogue built from the existing site's sections, layouts, backgrounds, SEO panel, draft/publish, versions | |
 | 5 | Blog: categories, tags, authors, Tiptap editor, scheduling, comment moderation, SEO assistant, RSS | |
@@ -33,6 +33,30 @@ Each phase is one pull request. Web CI (`.github/workflows/web-ci.yml`) must be 
 - The sidebar only lists screens that exist; each phase adds its links.
 - `src/app/(site)/page.tsx` is a placeholder until Phase 6.
 
+## What Phase 2 added
+- `/admin/settings` (saved at once, no draft): company, tagline, footer description, logos (light/dark) and the
+  default share image (MediaPicker: browse, search, upload-and-pick), contact, **WhatsApp** (number, button text,
+  response note), **opening hours** as rows, social pages (checked to be the right site), SEO defaults with a
+  Google preview, title pattern, Search Console code (a pasted meta tag is reduced to the code), **Google
+  Analytics** (a pasted Google snippet is reduced to the `G-` ID; old `UA-` IDs refused), heading/body fonts
+  (Plus Jakarta Sans + Inter by default), smooth-scroll and parallax switches.
+- **Analytics:** the public layout loads GA4 with the saved ID; `/admin` never does. The dashboard shows On/Off.
+- `/admin/header`, `/admin/footer`: draft → publish → version history (30 kept), discard, restore, optional
+  note per publish, publish refused with the reason when a link is broken. Starter content = the current SAGEC
+  header ("Let’s Build" button, see-through over hero photos) and footer (3 editable column headings, `{year}`
+  copyright, optional "Built by" credit). The old footer's broken `/news` link is replaced by `/blog`.
+- `npm run db:seed`: creates the Site settings row with SAGEC's current details (safe to repeat).
+- The media library refuses to trash a logo or share image that Site settings uses.
+- Migration `…_settings_and_drafts`: `SiteSettings`, `GlobalSection`, `ContentVersion`.
+
+## Verified (Phase 2)
+Same sandbox as Phase 1 (PostgreSQL 16, S3 emulator, production build): typecheck · lint · 21 unit tests
+(settings rules, analytics ID parsing, hours rows, WhatsApp number, header/footer parsing, links, copyright) ·
+seed run twice · in Chrome, 21 checks: seeded details shown · logo uploaded from inside the picker · settings
+saved · only the G- ID kept from a pasted snippet · bad input refused with typed text kept · **GA on public
+pages, not on /admin** · dashboard On/Off · logo in use cannot be trashed · header publish, second publish
+with note in history, discard, restore · footer publish refused for a bad link, then published · activity log.
+
 ## Verified (Phase 1)
 In the sandbox, against PostgreSQL 16 and an S3 emulator standing in for R2, on the production build
 (standalone server, as on the VPS):
@@ -43,6 +67,7 @@ upload (4 WebP sizes stored), description saved and kept after reload, second us
 both, logout locks the CMS, no JavaScript errors, phone layout.
 
 ## Not tested — check these yourself
+- **A real Google Analytics property**: after launch, open the site and check Realtime in Google Analytics.
 - **Real Cloudflare R2** (only an emulator): upload, the public address, the CORS rule for video uploads.
 - **Video upload** (needs the R2 CORS rule; not exercised against the emulator).
 - ~~`prisma migrate deploy`~~ confirmed by Web CI on PR #3. (Prisma's engines could not be downloaded in the sandbox, so the init SQL was

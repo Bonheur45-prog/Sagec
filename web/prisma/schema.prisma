@@ -8,7 +8,8 @@
 //   in SiteSettings. (Phase 2)
 //
 // Built in phases: each phase adds its tables with its own migration (npm run db:migrate).
-// Phase 1 (this file): users, sessions, media library, activity log.
+// Phase 1: users, sessions, media library, activity log.
+// Phase 2: site settings, header/footer (draft → publish), version history.
 
 generator client {
   provider        = "prisma-client-js"
@@ -57,6 +58,71 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// ───────────────────────── Site settings ─────────────────────────
+
+/// One row (id 1). Saved immediately (no draft): a phone number must never wait for a publish.
+model SiteSettings {
+  id                     Int      @id @default(1)
+  companyName            String
+  legalName              String
+  tagline                String   @default("")
+  footerDescription      String   @default("") // empty = the tagline
+  phone                  String   @default("")
+  secondaryPhone         String   @default("")
+  publicEmail            String   @default("")
+  notificationEmail      String   @default("") // where new contact messages are emailed (Phase 3)
+  whatsappNumber         String   @default("") // digits only, with country code, e.g. 250788470243
+  whatsappLabel          String   @default("")
+  responseNote           String   @default("") // short line under the contact details
+  addressStreet          String   @default("")
+  addressCity            String   @default("")
+  addressCountry         String   @default("")
+  addressCountryCode     String   @default("")
+  /// Rows like [{ "day": "Monday – Friday", "hours": "8:00 AM – 5:00 PM" }]
+  businessHours          Json     @default("[]")
+  /// [{ "platform": "linkedin", "url": "https://…" }]
+  socials                Json     @default("[]")
+  logoMediaId            String?
+  logoLightMediaId       String? // logo for dark backgrounds (footer, over hero photos)
+  defaultOgMediaId       String? // social-share image used when a page has none
+  seoTitle               String   @default("") // default <title> when a page has none
+  seoDescription         String   @default("")
+  titleTemplate          String   @default("%s | SAGEC Ltd")
+  googleSiteVerification String   @default("")
+  /// Google Analytics 4 measurement ID (G-…). Empty = no analytics. Never loaded on /admin.
+  googleAnalyticsId      String   @default("")
+  headingFont            String   @default("plus-jakarta-sans")
+  bodyFont               String   @default("inter")
+  smoothScroll           Boolean  @default(true)
+  parallax               Boolean  @default(true)
+  updatedAt              DateTime @updatedAt
+}
+
+// ───────────────────────── Draft / publish ─────────────────────────
+
+/// Site-wide pieces edited as a draft and published: "header", "footer".
+model GlobalSection {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  draft       Json      @default("{}")
+  published   Json?
+  publishedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+/// Snapshot taken on every publish so an earlier version can be restored (30 kept per document).
+model ContentVersion {
+  id          String   @id @default(cuid())
+  entityType  String // "global" (Phase 4 adds "page", Phase 5 "post")
+  entityKey   String
+  snapshot    Json
+  note        String?
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityKey, createdAt])
 }
 
 // ───────────────────────── Media (Cloudflare R2) ─────────────────────────
