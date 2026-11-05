@@ -1,0 +1,36 @@
+.page {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--space-5) var(--gutter);
+  background: var(--navy-900);
+}
+
+.card {
+  width: 100%;
+  max-width: 24rem;
+  padding: var(--space-7) var(--space-6);
+  background: var(--white);
+  outline: 1px solid var(--line-accent);
+  outline-offset: calc(var(--frame-inset) * -1);
+}
+
+.logo {
+  display: block;
+  width: 13rem;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 var(--space-5);
+}
+
+.title {
+  margin: var(--space-1) 0 var(--space-6);
+  font-size: var(--step-3);
+  line-height: var(--lh-tight);
+}
+
+.help {
+  margin-top: var(--space-5);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}

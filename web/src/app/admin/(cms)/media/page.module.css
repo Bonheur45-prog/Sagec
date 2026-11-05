@@ -1,0 +1,19 @@
+/* Search bar above the media library: input and button on one line, same height. */
+.search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.search > :first-child {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+
+/* The button sits beside the input, not beside its label. */
+.search > button {
+  align-self: flex-end;
+  min-height: calc(var(--step-0) * var(--lh-body) + var(--space-2) * 2 + 2px);
+}

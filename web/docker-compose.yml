@@ -1,0 +1,12 @@
+# Local PostgreSQL for development only (production uses the PostgreSQL already running on the VPS).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: sagec
+      POSTGRES_PASSWORD: sagec
+      POSTGRES_DB: sagec
+    ports: ['5434:5432'] # 5434 so it can run next to BrightLink's local database on 5433
+    volumes: [dbdata:/var/lib/postgresql/data]
+volumes:
+  dbdata:

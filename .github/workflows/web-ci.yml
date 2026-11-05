@@ -1,0 +1,96 @@
+# Checks every pull request that touches the new site (web/): database migration, schema drift,
+# typecheck, lint, unit tests, production build, and a quick start of the built site.
+# It never touches the VPS (the deploy workflow arrives in Phase 7, on main only).
+# Same pattern as the BrightLink CI. The repo is public, so these minutes are free.
+name: Web CI
+
+on:
+  pull_request:
+    paths: ['web/**', '.github/workflows/web-ci.yml']
+  workflow_dispatch:
+
+concurrency:
+  # a newer push to the same pull request cancels the check still running for the older one
+  group: web-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sagec
+          POSTGRES_PASSWORD: sagec
+          POSTGRES_DB: sagec
+        ports: ['5434:5432']
+        options: >-
+          --health-cmd "pg_isready -U sagec" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://sagec:sagec@localhost:5434/sagec?schema=public
+      SITE_URL: https://www.sagec.test
+      R2_PUBLIC_HOSTNAME: media.example.com
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # Each step keeps its output in a file and, if it fails, repeats the last lines as an error
+      # annotation, so the reason is visible on the run page without opening logs.
+      - name: Install
+        run: npm ci > /tmp/out.txt 2>&1 || { tail -40 /tmp/out.txt | sed 's/^/::error title=Install::/'; exit 1; }
+
+      - name: Apply migrations
+        run: npx prisma migrate deploy > /tmp/out.txt 2>&1 || { tail -40 /tmp/out.txt | sed 's/^/::error title=Migrate::/'; exit 1; }
+
+      # Fails if prisma/schema.prisma and the migration files describe different databases
+      # (e.g. a schema change without `npm run db:migrate`).
+      - name: Migrations match the schema
+        run: |
+          PGPASSWORD=sagec psql -h localhost -p 5434 -U sagec -d sagec -qc 'CREATE DATABASE sagec_shadow'
+          npx prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma \
+            --shadow-database-url "postgresql://sagec:sagec@localhost:5434/sagec_shadow" --exit-code > /tmp/out.txt 2>&1 \
+            || { echo "::error title=Schema drift::prisma/schema.prisma and prisma/migrations differ. Run npm run db:migrate."; sed 's/^/::error title=Drift::/' /tmp/out.txt | tail -40; exit 1; }
+
+      - name: Typecheck
+        run: npm run typecheck > /tmp/out.txt 2>&1 || { tail -40 /tmp/out.txt | sed 's/^/::error title=Typecheck::/'; exit 1; }
+
+      - name: Lint
+        run: npx next lint > /tmp/out.txt 2>&1 || { grep -B2 "Error:" /tmp/out.txt | tail -40 | sed 's/^/::error title=Lint::/'; exit 1; }
+
+      - name: Unit tests
+        run: npm test > /tmp/out.txt 2>&1 || { tail -40 /tmp/out.txt | sed 's/^/::error title=Tests::/'; exit 1; }
+
+      - name: Build
+        run: npm run build > /tmp/out.txt 2>&1 || { tail -60 /tmp/out.txt | sed 's/^/::error title=Build::/'; exit 1; }
+
+      - name: Start the built site and check key pages
+        run: |
+          cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+          PORT=3000 node .next/standalone/server.js > /tmp/server.txt 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3000/admin/login && break; sleep 1; done
+          fail=0
+          check() { code=$(curl -s -o /tmp/page.html -w '%{http_code}' "$@"); if [ "$code" != "$EXPECT" ]; then echo "::error title=Smoke::$* returned $code, expected $EXPECT"; fail=1; fi; }
+          EXPECT=200 check http://localhost:3000/
+          EXPECT=200 check http://localhost:3000/admin/login
+          EXPECT=200 check http://localhost:3000/images/brand/sagec-logo-light.png
+          # no session cookie: every CMS screen sends you to the login page
+          for p in /admin /admin/media /admin/users /admin/activity; do EXPECT=307 check "http://localhost:3000$p"; done
+          # a forged session cookie passes the quick cookie check, so the page itself must ask the
+          # database and refuse it. This proves the built site can reach PostgreSQL.
+          EXPECT=307 check -b 'sagec_admin_session=forged' http://localhost:3000/admin
+          # upload endpoints refuse requests without a session
+          EXPECT=401 check -X POST http://localhost:3000/admin/api/media/image
+          # the built site must read the database itself (Prisma's query compiler must be in the build)
+          if grep -qE 'query_compiler|ENOENT|PrismaClient' /tmp/server.txt; then grep -m3 -A4 -E 'query_compiler|ENOENT|PrismaClient' /tmp/server.txt | sed 's/^/::error title=Database::/'; fail=1; fi
+          if [ $fail = 1 ]; then tail -30 /tmp/server.txt | sed 's/^/::error title=Server log::/'; exit 1; fi
