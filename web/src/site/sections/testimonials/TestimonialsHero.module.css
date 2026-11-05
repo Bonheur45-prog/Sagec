@@ -1,0 +1,84 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-navy-dark);
+}
+
+/* Photo layer. --hero-bg is set inline when a photo is uploaded in the CMS;
+   otherwise the default banner is used, with a navy gradient underneath so
+   the white text stays readable even if the image file is missing. */
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--hero-bg, url('/images/testimonials/testimonials-hero.jpg')),
+    linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-dark) 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    160deg,
+    rgba(17, 29, 51, 0.82) 0%,
+    rgba(27, 42, 74, 0.74) 50%,
+    rgba(17, 29, 51, 0.9) 100%
+  );
+}
+
+.wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--section-padding-x);
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-orange);
+  margin-bottom: var(--space-4);
+}
+
+.headline {
+  font-family: var(--font-heading);
+  font-size: clamp(1.9rem, 4.6vw, 3.2rem);
+  line-height: 1.1;
+  font-weight: 800;
+  color: var(--color-text-white);
+  margin: 0 0 var(--space-6) 0;
+}
+
+.subline {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.4vw, 1.0625rem);
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding-block: 3.5rem;
+  }
+
+  .headline {
+    font-size: clamp(1.6rem, 6.4vw, 2.2rem);
+  }
+}

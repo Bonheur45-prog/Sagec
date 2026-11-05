@@ -1,0 +1,1667 @@
+[
+ {
+  "slug": "home-page",
+  "label": "home-page",
+  "description": "All homepage-specific content: Hero slides, Stats, and the copy for the Services/Projects/Testimonials teasers and closing CTA. The actual Services/Projects/Testimonials items themselves live in their own collections, not here.",
+  "fields": [
+   {
+    "name": "hero",
+    "type": "group",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "slides",
+      "type": "array",
+      "minRows": 1,
+      "description": "Background rotation. Each slide is either a video or an image — pick the type, then fill in the matching field below it.",
+      "fields": [
+       {
+        "name": "type",
+        "type": "select",
+        "required": true,
+        "options": [
+         "image",
+         "video"
+        ],
+        "defaultValue": "image"
+       },
+       {
+        "name": "image",
+        "type": "upload",
+        "relationTo": "media"
+       },
+       {
+        "name": "video",
+        "type": "upload",
+        "relationTo": "media",
+        "description": "Requires video mimeTypes to be allowed on the Media collection — see note below."
+       },
+       {
+        "name": "poster",
+        "type": "upload",
+        "relationTo": "media",
+        "description": "Shown before the video loads/plays."
+       },
+       {
+        "name": "headline",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "subline",
+        "type": "textarea",
+        "required": true
+       },
+       {
+        "name": "duration",
+        "type": "number",
+        "defaultValue": 7000,
+        "description": "Milliseconds shown before auto-advancing (image slides only — video slides advance when the video ends)."
+       }
+      ]
+     },
+     {
+      "name": "foreground",
+      "type": "group",
+      "label": "Foreground Worker Image",
+      "fields": [
+       {
+        "name": "image",
+        "type": "upload",
+        "required": true,
+        "relationTo": "media"
+       },
+       {
+        "name": "alt",
+        "type": "text",
+        "required": true
+       }
+      ]
+     },
+     {
+      "name": "primaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLink",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLink",
+      "type": "text",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "stats",
+    "type": "group",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "supportingText",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "items",
+      "type": "array",
+      "maxRows": 4,
+      "minRows": 1,
+      "fields": [
+       {
+        "name": "iconKey",
+        "type": "select",
+        "required": true,
+        "options": [
+         {
+          "label": "Years (Clock)",
+          "value": "years"
+         },
+         {
+          "label": "Projects (Building2)",
+          "value": "projects"
+         },
+         {
+          "label": "Clients (Users)",
+          "value": "clients"
+         },
+         {
+          "label": "Location (MapPin)",
+          "value": "location"
+         }
+        ]
+       },
+       {
+        "name": "value",
+        "type": "number",
+        "description": "Leave blank for a non-numeric stat (e.g. a location name) and use Text below instead."
+       },
+       {
+        "name": "text",
+        "type": "text",
+        "description": "Only used when Value is left blank, e.g. \"Kigali\"."
+       },
+       {
+        "name": "suffix",
+        "type": "text",
+        "description": "e.g. \"+\""
+       },
+       {
+        "name": "label",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "description",
+        "type": "textarea",
+        "required": true
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "name": "servicesTeaser",
+    "type": "group",
+    "label": "Services Teaser Copy",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "viewAllLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "viewAllLink",
+      "type": "text",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "projectsTeaser",
+    "type": "group",
+    "label": "Projects Teaser Copy",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headingStart",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headingHighlight",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subtext",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "viewAllLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "viewAllLink",
+      "type": "text",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "testimonialsTeaser",
+    "type": "group",
+    "label": "Testimonials Teaser Copy",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "partnersSection",
+    "type": "group",
+    "label": "Partners Section Copy",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "whyChooseUs",
+    "type": "group",
+    "label": "Why Choose Us Section",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headingStart",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"Built on\" (non-highlighted part)"
+     },
+     {
+      "name": "headingHighlight",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"Trust\" (shown in gold)"
+     },
+     {
+      "name": "headingEnd",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"Delivered with Precision\""
+     },
+     {
+      "name": "subtext",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "reasons",
+      "type": "array",
+      "maxRows": 8,
+      "minRows": 1,
+      "fields": [
+       {
+        "name": "title",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "description",
+        "type": "textarea",
+        "required": true
+       }
+      ]
+     },
+     {
+      "name": "backgroundImage",
+      "type": "upload",
+      "required": true,
+      "relationTo": "media",
+      "description": "Parallax background behind the section."
+     },
+     {
+      "name": "media",
+      "type": "group",
+      "label": "Right Column Media",
+      "fields": [
+       {
+        "name": "type",
+        "type": "select",
+        "required": true,
+        "options": [
+         "image",
+         "video"
+        ],
+        "defaultValue": "image"
+       },
+       {
+        "name": "image",
+        "type": "upload",
+        "relationTo": "media"
+       },
+       {
+        "name": "video",
+        "type": "upload",
+        "relationTo": "media"
+       },
+       {
+        "name": "alt",
+        "type": "text"
+       }
+      ]
+     },
+     {
+      "name": "ctaLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "ctaLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /about"
+     }
+    ]
+   },
+   {
+    "name": "partnersTeaser",
+    "type": "group",
+    "label": "Partners Strip",
+    "description": "Heading above the partner logos on the home page. Logos are managed in the Partners collection; the strip is hidden when there are none.",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "defaultValue": "Trusted By"
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "defaultValue": "Our Partners"
+     }
+    ]
+   },
+   {
+    "name": "cta",
+    "type": "group",
+    "label": "Closing CTA",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headingStart",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headingHighlight",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headingEnd",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLink",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLink",
+      "type": "text",
+      "required": true
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "about-page",
+  "label": "about-page",
+  "description": "All content for the About page: story, mission/vision, core values, timeline, and closing CTA.",
+  "fields": [
+   {
+    "name": "hero",
+    "type": "group",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headline",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "backgroundImage",
+      "type": "upload",
+      "required": true,
+      "relationTo": "media"
+     }
+    ]
+   },
+   {
+    "name": "story",
+    "type": "group",
+    "label": "Our Story",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "paragraphs",
+      "type": "array",
+      "minRows": 1,
+      "fields": [
+       {
+        "name": "text",
+        "type": "textarea",
+        "required": true
+       }
+      ]
+     },
+     {
+      "name": "quote",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "required": true,
+      "relationTo": "media"
+     },
+     {
+      "name": "imageAlt",
+      "type": "text",
+      "required": true,
+      "description": "Accessibility description of the image."
+     }
+    ]
+   },
+   {
+    "name": "missionVisionEyebrow",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"Who We Are\""
+   },
+   {
+    "name": "missionVisionHeadingStart",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"Our\" (the non-highlighted part)"
+   },
+   {
+    "name": "missionVisionHeadingHighlight",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"Purpose\" (shown in gold)"
+   },
+   {
+    "name": "missionVision",
+    "type": "group",
+    "label": "Mission & Vision",
+    "fields": [
+     {
+      "name": "mission",
+      "type": "group",
+      "fields": [
+       {
+        "name": "eyebrow",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "heading",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "text",
+        "type": "textarea",
+        "required": true
+       }
+      ]
+     },
+     {
+      "name": "vision",
+      "type": "group",
+      "fields": [
+       {
+        "name": "eyebrow",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "heading",
+        "type": "text",
+        "required": true
+       },
+       {
+        "name": "text",
+        "type": "textarea",
+        "required": true
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "name": "coreValuesEyebrow",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"What Drives Us\""
+   },
+   {
+    "name": "coreValuesHeading",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"Our Core Values\""
+   },
+   {
+    "name": "coreValues",
+    "type": "array",
+    "label": "Core Values",
+    "minRows": 1,
+    "fields": [
+     {
+      "name": "iconKey",
+      "type": "select",
+      "required": true,
+      "options": [
+       {
+        "label": "Quality (Award)",
+        "value": "quality"
+       },
+       {
+        "label": "Innovation (Lightbulb)",
+        "value": "innovation"
+       },
+       {
+        "label": "Integrity (ShieldCheck)",
+        "value": "integrity"
+       },
+       {
+        "label": "Sustainability (Leaf)",
+        "value": "sustainability"
+       }
+      ]
+     },
+     {
+      "name": "title",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "timelineEyebrow",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"Our Journey\""
+   },
+   {
+    "name": "timelineHeading",
+    "type": "text",
+    "required": true,
+    "description": "e.g. \"Milestones That Define Us\""
+   },
+   {
+    "name": "timelineBackgroundImage",
+    "type": "upload",
+    "required": true,
+    "relationTo": "media",
+    "description": "Parallax background behind the timeline."
+   },
+   {
+    "name": "milestones",
+    "type": "array",
+    "label": "Timeline Milestones",
+    "minRows": 1,
+    "description": "Displayed in array order — drag to reorder here, no separate order field needed.",
+    "fields": [
+     {
+      "name": "year",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "badge",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"Founded\", \"Milestone\", \"In Progress\""
+     },
+     {
+      "name": "title",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "aboutCTA",
+    "type": "group",
+    "label": "Closing CTA",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "backgroundImage",
+      "type": "upload",
+      "relationTo": "media"
+     },
+     {
+      "name": "primaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /contact"
+     },
+     {
+      "name": "secondaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /projects"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "services-page",
+  "label": "services-page",
+  "description": "Page-level content for the Services page: process steps, the closing CTA, and the \"Why Choose Us\" list.",
+  "fields": [
+   {
+    "name": "hero",
+    "type": "group",
+    "label": "Hero",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"SAGEC Expertise\""
+     },
+     {
+      "name": "headline",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "backgroundImage",
+      "type": "upload",
+      "required": true,
+      "relationTo": "media"
+     }
+    ]
+   },
+   {
+    "name": "processSteps",
+    "type": "array",
+    "label": "Process Steps",
+    "description": "The \"How We Work\" steps shown on the Services page.",
+    "fields": [
+     {
+      "name": "number",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"01\""
+     },
+     {
+      "name": "title",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "whyChooseUs",
+    "type": "array",
+    "label": "Why Choose Us",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "servicesCTA",
+    "type": "group",
+    "label": "Closing CTA",
+    "fields": [
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /contact"
+     },
+     {
+      "name": "secondaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /projects"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "projects-page",
+  "label": "projects-page",
+  "description": "Page-level content for the Projects page: hero copy, empty-state message, detail-page section labels, and the closing CTA.",
+  "fields": [
+   {
+    "name": "projectsHero",
+    "type": "group",
+    "label": "Hero",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headlineLine1",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headlineLine2",
+      "type": "text",
+      "description": "Optional SHORT second line of the big headline (a few words). Leave blank for a one-line headline. Put any longer sentence in \"Subline\" below — a long sentence here is shown as the subline automatically."
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true,
+      "description": "The sentence shown under the headline."
+     }
+    ]
+   },
+   {
+    "name": "projectsStats",
+    "type": "array",
+    "label": "Stats Strip",
+    "defaultValue": [
+     {
+      "value": 10,
+      "suffix": "+",
+      "label": "Years Experience"
+     },
+     {
+      "value": 30,
+      "suffix": "+",
+      "label": "Projects Completed"
+     },
+     {
+      "value": 50,
+      "suffix": "+",
+      "label": "Happy Clients"
+     },
+     {
+      "text": "Kigali",
+      "label": "Rwanda"
+     }
+    ],
+    "maxRows": 6,
+    "description": "The counters under the Projects hero. Use a Number for a counting-up stat (e.g. 30 + \"+\"), or fill Text to show words instead (e.g. \"Kigali\").",
+    "fields": [
+     {
+      "name": "value",
+      "type": "number"
+     },
+     {
+      "name": "suffix",
+      "type": "text",
+      "description": "e.g. + or %"
+     },
+     {
+      "name": "text",
+      "type": "text",
+      "description": "If set, shown instead of the number."
+     },
+     {
+      "name": "label",
+      "type": "text",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "projectsEmptyMessage",
+    "type": "text",
+    "required": true,
+    "description": "Shown when a category filter matches no projects."
+   },
+   {
+    "name": "projectDetailLabels",
+    "type": "group",
+    "label": "Detail Page Section Labels",
+    "fields": [
+     {
+      "name": "overviewHeading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "servicesHeading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "specsHeading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "galleryHeading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "relatedHeading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "ctaLabel",
+      "type": "text",
+      "required": true,
+      "description": "The words on the button at the bottom of a project page (e.g. \"Contact\"). The button always links to /contact — type the label here, not the link."
+     }
+    ]
+   },
+   {
+    "name": "projectsCTA",
+    "type": "group",
+    "label": "Closing CTA",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "primaryBtnLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /contact"
+     },
+     {
+      "name": "secondaryBtnLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "secondaryBtnLink",
+      "type": "text",
+      "required": true,
+      "description": "Internal path, e.g. /services"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "testimonials-page",
+  "label": "testimonials-page",
+  "description": "Page-level hero copy for the Testimonials page.",
+  "fields": [
+   {
+    "name": "eyebrow",
+    "type": "text",
+    "required": true
+   },
+   {
+    "name": "headlineLine1",
+    "type": "text",
+    "required": true
+   },
+   {
+    "name": "headlineLine2",
+    "type": "text",
+    "required": true
+   },
+   {
+    "name": "subline",
+    "type": "textarea",
+    "required": true
+   },
+   {
+    "name": "backgroundImage",
+    "type": "upload",
+    "relationTo": "media",
+    "description": "Optional photo behind the hero text (a dark overlay is added automatically). Blank = the default banner image."
+   }
+  ]
+ },
+ {
+  "slug": "careers-page",
+  "label": "careers-page",
+  "description": "Page-level copy for the Careers page. The jobs themselves live in \"Job Openings\".",
+  "fields": [
+   {
+    "type": "collapsible",
+    "label": "Hero",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headline",
+      "type": "text",
+      "required": true,
+      "description": "e.g. \"Build Rwanda’s Future With Us\""
+     },
+     {
+      "name": "headlineHighlight",
+      "type": "text",
+      "description": "Optional — a word from the headline to show in orange, e.g. \"Future\". Must match the headline exactly."
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   },
+   {
+    "type": "collapsible",
+    "label": "How to Apply",
+    "fields": [
+     {
+      "name": "applyInstructions",
+      "type": "textarea",
+      "required": true,
+      "description": "Shown inside every job’s details window."
+     },
+     {
+      "name": "defaultApplyEmail",
+      "type": "email",
+      "description": "Used for any job without its own Apply Email. Blank = the email in Company Info."
+     }
+    ]
+   },
+   {
+    "type": "collapsible",
+    "label": "When there are no open roles",
+    "fields": [
+     {
+      "name": "noJobsHeading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "noJobsText",
+      "type": "textarea",
+      "required": true
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "blog-page",
+  "label": "Blog Page",
+  "description": "Hero, headings and labels for the Blog list page and blog post pages.",
+  "fields": [
+   {
+    "name": "hero",
+    "type": "group",
+    "label": "Blog List Hero",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "defaultValue": "Ideas That Shape Rwanda"
+     },
+     {
+      "name": "breadcrumbLabel",
+      "type": "text",
+      "defaultValue": "Blog"
+     },
+     {
+      "name": "backgroundImage",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional. Blank = the default banner image."
+     }
+    ]
+   },
+   {
+    "name": "grid",
+    "type": "group",
+    "label": "Blog List Section & Sidebar",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "defaultValue": "News & Insights"
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "defaultValue": "Read Our Latest Articles"
+     },
+     {
+      "name": "noResultsText",
+      "type": "text",
+      "defaultValue": "No articles match your search."
+     },
+     {
+      "name": "searchPlaceholder",
+      "type": "text",
+      "defaultValue": "Search here..."
+     },
+     {
+      "name": "popularPostsLabel",
+      "type": "text",
+      "defaultValue": "Popular Posts"
+     },
+     {
+      "name": "popularTagsLabel",
+      "type": "text",
+      "defaultValue": "Popular Tags"
+     }
+    ]
+   },
+   {
+    "name": "post",
+    "type": "group",
+    "label": "Blog Post Page",
+    "fields": [
+     {
+      "name": "heroTitle",
+      "type": "text",
+      "defaultValue": "Blog Details",
+      "description": "Shown while a post is loading."
+     },
+     {
+      "name": "breadcrumbParentLabel",
+      "type": "text",
+      "defaultValue": "Blog"
+     },
+     {
+      "name": "notFoundText",
+      "type": "text",
+      "defaultValue": "Sorry, we couldn't find that article."
+     },
+     {
+      "name": "backToBlogLabel",
+      "type": "text",
+      "defaultValue": "Back to News & Insights"
+     },
+     {
+      "name": "shareLabel",
+      "type": "text",
+      "defaultValue": "Share:"
+     },
+     {
+      "name": "relatedPostsLabel",
+      "type": "text",
+      "defaultValue": "More Articles"
+     },
+     {
+      "name": "commentsLabel",
+      "type": "text",
+      "defaultValue": "Comments"
+     },
+     {
+      "name": "leaveCommentLabel",
+      "type": "text",
+      "defaultValue": "Leave a Comment"
+     },
+     {
+      "name": "commentFormDisclaimer",
+      "type": "text",
+      "defaultValue": "Comments are reviewed before appearing publicly."
+     },
+     {
+      "name": "commentNameLabel",
+      "type": "text",
+      "defaultValue": "Your Name"
+     },
+     {
+      "name": "commentEmailLabel",
+      "type": "text",
+      "defaultValue": "Email Address"
+     },
+     {
+      "name": "commentWebsiteLabel",
+      "type": "text",
+      "defaultValue": "Website (optional)"
+     },
+     {
+      "name": "commentMessageLabel",
+      "type": "text",
+      "defaultValue": "Your Comment"
+     },
+     {
+      "name": "commentSubmitLabel",
+      "type": "text",
+      "defaultValue": "Post Comment"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "contact-page",
+  "label": "contact-page",
+  "description": "Page-level copy for the Contact page. Actual phone/email/address/hours come from the CompanyInfo global, not repeated here.",
+  "fields": [
+   {
+    "name": "hero",
+    "type": "group",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "headline",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subline",
+      "type": "textarea",
+      "required": true
+     },
+     {
+      "name": "backgroundImage",
+      "type": "upload",
+      "relationTo": "media"
+     }
+    ]
+   },
+   {
+    "name": "infoSection",
+    "type": "group",
+    "label": "Contact Info Section Header",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "form",
+    "type": "group",
+    "label": "Contact Form Copy",
+    "fields": [
+     {
+      "name": "eyebrow",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "heading",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "nameLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "namePlaceholder",
+      "type": "text"
+     },
+     {
+      "name": "emailLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "emailPlaceholder",
+      "type": "text"
+     },
+     {
+      "name": "phoneLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "phonePlaceholder",
+      "type": "text"
+     },
+     {
+      "name": "messageLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "messagePlaceholder",
+      "type": "text"
+     },
+     {
+      "name": "submitLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "submitLoadingLabel",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "successMessage",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "errorMessage",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "validationNameRequired",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "validationEmailRequired",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "validationEmailInvalid",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "validationPhoneRequired",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "validationMessageRequired",
+      "type": "text",
+      "required": true
+     }
+    ]
+   },
+   {
+    "name": "map",
+    "type": "group",
+    "fields": [
+     {
+      "name": "label",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "title",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "subtitle",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "embedSrc",
+      "type": "textarea",
+      "required": true,
+      "description": "The Google Maps embed URL."
+     },
+     {
+      "name": "directionsLink",
+      "type": "text",
+      "required": true
+     },
+     {
+      "name": "directionsLabel",
+      "type": "text",
+      "required": true
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "seo-settings",
+  "label": "SEO Settings",
+  "description": "Page titles, meta descriptions and social-share images for the main pages.",
+  "fields": [
+   {
+    "name": "siteName",
+    "type": "text",
+    "defaultValue": "SAGEC Ltd",
+    "description": "Appended to every page title."
+   },
+   {
+    "name": "defaultDescription",
+    "type": "textarea",
+    "description": "Used on any page that has no description of its own."
+   },
+   {
+    "name": "defaultImage",
+    "type": "upload",
+    "relationTo": "media",
+    "description": "Default social-share image for pages without their own."
+   },
+   {
+    "name": "home",
+    "type": "group",
+    "label": "Home",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   },
+   {
+    "name": "about",
+    "type": "group",
+    "label": "About",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   },
+   {
+    "name": "services",
+    "type": "group",
+    "label": "Services",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   },
+   {
+    "name": "projects",
+    "type": "group",
+    "label": "Projects",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   },
+   {
+    "name": "testimonials",
+    "type": "group",
+    "label": "Testimonials",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   },
+   {
+    "name": "blog",
+    "type": "group",
+    "label": "Blog",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   },
+   {
+    "name": "contact",
+    "type": "group",
+    "label": "Contact",
+    "fields": [
+     {
+      "name": "title",
+      "type": "text",
+      "description": "Browser tab / Google title. \"— SAGEC Ltd\" is added automatically. Leave blank on Home to use the default site title."
+     },
+     {
+      "name": "description",
+      "type": "textarea",
+      "description": "Meta description shown in search results (aim for 150–160 characters)."
+     },
+     {
+      "name": "image",
+      "type": "upload",
+      "relationTo": "media",
+      "description": "Optional social-share image (Open Graph). Blank = the site default."
+     }
+    ]
+   }
+  ]
+ }
+]

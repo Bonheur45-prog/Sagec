@@ -7,7 +7,6 @@ import { Notice } from '@/components/admin/Notice/Notice';
 import { PublishBar } from '@/components/admin/PublishBar/PublishBar';
 import { useDocEditor } from '@/components/admin/PublishBar/useDocEditor';
 import {
-  MAX_CHILDREN,
   MAX_LINKS,
   MAX_NAV_ITEMS,
   type FooterDoc,
@@ -136,30 +135,6 @@ function HeaderFields({ doc, setDoc, problems: p, listId }: { doc: HeaderDoc; se
               <Checkbox label="New tab" checked={n.newTab} onChange={(e) => setItem(i, { newTab: e.target.checked })} />
               <RowTools what="menu item" onUp={() => setNav(move(doc.navItems, i, -1))} onDown={() => setNav(move(doc.navItems, i, 1))} onRemove={() => setNav(doc.navItems.filter((_, j) => j !== i))} />
             </div>
-            <div className={styles.children}>
-              {n.children.length > 0 && <p className={styles.hint}>Dropdown links (the menu item’s own link may stay empty)</p>}
-              {n.children.map((c, j) => {
-                const setChild = (patch: Partial<typeof c>) => setItem(i, { children: n.children.map((x, k) => (k === j ? { ...x, ...patch } : x)) });
-                return (
-                  <div key={c.id} className={styles.row}>
-                    <Text label="Label" value={c.label} onChange={(label) => setChild({ label })} error={p[`nav.${i}.${j}.label`]} />
-                    <UrlInput value={c.url} onChange={(url) => setChild({ url })} error={p[`nav.${i}.${j}.url`]} listId={listId} />
-                    <Text label="Short description" value={c.description} max={160} onChange={(description) => setChild({ description })} />
-                    <RowTools
-                      what="dropdown link"
-                      onUp={() => setItem(i, { children: move(n.children, j, -1) })}
-                      onDown={() => setItem(i, { children: move(n.children, j, 1) })}
-                      onRemove={() => setItem(i, { children: n.children.filter((_, k) => k !== j) })}
-                    />
-                  </div>
-                );
-              })}
-              {n.children.length < MAX_CHILDREN && (
-                <Button size="sm" variant="ghost" onClick={() => setItem(i, { children: [...n.children, { id: newId(), label: '', url: '', description: '' }] })}>
-                  + Add dropdown link
-                </Button>
-              )}
-            </div>
           </div>
         ))}
         {doc.navItems.length < MAX_NAV_ITEMS && (
@@ -179,17 +154,7 @@ function HeaderFields({ doc, setDoc, problems: p, listId }: { doc: HeaderDoc; se
         )}
       </Section>
 
-      <Section title="Top bar and behaviour">
-        <Checkbox label="Show the thin top bar (phone, email, socials)" checked={doc.topBar.enabled} onChange={(e) => setDoc((d) => ({ ...d, topBar: { ...d.topBar, enabled: e.target.checked } }))} />
-        {doc.topBar.enabled && (
-          <>
-            <Text label="Short message (optional)" value={doc.topBar.message} max={160} onChange={(message) => setDoc((d) => ({ ...d, topBar: { ...d.topBar, message } }))} />
-            <Checkbox label="Phone" checked={doc.topBar.showPhone} onChange={(e) => setDoc((d) => ({ ...d, topBar: { ...d.topBar, showPhone: e.target.checked } }))} />
-            <Checkbox label="Email" checked={doc.topBar.showEmail} onChange={(e) => setDoc((d) => ({ ...d, topBar: { ...d.topBar, showEmail: e.target.checked } }))} />
-            <Checkbox label="Social icons" checked={doc.topBar.showSocials} onChange={(e) => setDoc((d) => ({ ...d, topBar: { ...d.topBar, showSocials: e.target.checked } }))} />
-          </>
-        )}
-        <Checkbox label="Stay at the top while scrolling" checked={doc.sticky} onChange={(e) => setDoc((d) => ({ ...d, sticky: e.target.checked }))} />
+      <Section title="Behaviour">
         <Checkbox label="See-through over hero photos (solid once the visitor scrolls)" checked={doc.transparentOnHero} onChange={(e) => setDoc((d) => ({ ...d, transparentOnHero: e.target.checked }))} />
       </Section>
     </>

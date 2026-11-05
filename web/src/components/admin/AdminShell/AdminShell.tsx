@@ -30,6 +30,7 @@ export function AdminShell({ businessName, user, counts, logoutAction, children 
     {
       label: 'Content',
       links: [
+        { href: '/admin/pages', label: 'Pages' },
         { href: '/admin/blog', label: 'Blog' },
         { href: '/admin/comments', label: 'Comments', count: counts?.comments },
         { href: '/admin/services', label: 'Services' },

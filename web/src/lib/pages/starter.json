@@ -1,0 +1,381 @@
+{
+ "home-page": {
+  "hero": {
+   "eyebrow": "Architectural & Engineering Solutions",
+   "slides": [
+    {
+     "type": "image",
+     "headline": "Building Excellence",
+     "subline": "Your Vision, Our Expertise — delivering innovative architecture and construction across Rwanda.",
+     "duration": 7000
+    },
+    {
+     "type": "image",
+     "headline": "Landmark Commercial Projects",
+     "subline": "Iconic structures that define Kigali's skyline — built with precision and purpose.",
+     "duration": 7000
+    },
+    {
+     "type": "image",
+     "headline": "Precision Engineering",
+     "subline": "Where structural excellence meets architectural beauty — every detail engineered to last.",
+     "duration": 7000
+    },
+    {
+     "type": "image",
+     "headline": "Interior Design Excellence",
+     "subline": "Transforming spaces into unforgettable experiences — where style meets function.",
+     "duration": 7000
+    },
+    {
+     "type": "image",
+     "headline": "Shaping Rwanda's Future",
+     "subline": "Delivering innovative, sustainable construction solutions — building tomorrow, today.",
+     "duration": 7000
+    }
+   ],
+   "foreground": {
+    "alt": "SAGEC site engineer overseeing construction"
+   },
+   "primaryBtnLabel": "View Our Projects",
+   "primaryBtnLink": "/projects",
+   "secondaryBtnLabel": "Get in Touch",
+   "secondaryBtnLink": "/contact"
+  },
+  "stats": {
+   "eyebrow": "Our Impact",
+   "heading": "Numbers That Define Us",
+   "supportingText": "Every project is a testament to our commitment — built on trust, precision, and a relentless pursuit of excellence.",
+   "items": [
+    {
+     "iconKey": "years",
+     "value": 10,
+     "suffix": "+",
+     "label": "Years Experience",
+     "description": "Over a decade of delivering architectural and engineering excellence across Rwanda."
+    },
+    {
+     "iconKey": "projects",
+     "value": 30,
+     "suffix": "+",
+     "label": "Projects Completed",
+     "description": "From landmark commercial buildings to premium interior design commissions."
+    },
+    {
+     "iconKey": "clients",
+     "value": 50,
+     "suffix": "+",
+     "label": "Happy Clients",
+     "description": "Trusted by government institutions, private developers, and businesses alike."
+    },
+    {
+     "iconKey": "location",
+     "text": "Kigali",
+     "suffix": "",
+     "label": "Rwanda",
+     "description": "Headquartered in Kigali, delivering landmark projects across the nation."
+    }
+   ]
+  },
+  "servicesTeaser": {
+   "eyebrow": "What We Offer",
+   "heading": "Our Services",
+   "viewAllLabel": "View All Services",
+   "viewAllLink": "/services"
+  },
+  "projectsTeaser": {
+   "eyebrow": "Our Work",
+   "headingStart": "Featured",
+   "headingHighlight": "Projects",
+   "subtext": "From landmark commercial developments to refined interiors — built with precision across Rwanda.",
+   "viewAllLabel": "View All Projects",
+   "viewAllLink": "/projects"
+  },
+  "testimonialsTeaser": {
+   "eyebrow": "Testimonials",
+   "heading": "Trusted By Rwanda’s Leading Developers",
+   "description": "From first consultation to final handover, our clients trust SAGEC to deliver with precision, transparency, and lasting quality — here is what a few of them have to say."
+  },
+  "partnersSection": {
+   "eyebrow": "Our Partners",
+   "heading": "Trusted By Industry Leaders",
+   "description": "We collaborate with leading suppliers, consultants, and institutions across Rwanda."
+  },
+  "whyChooseUs": {
+   "eyebrow": "Why choose us",
+   "headingStart": "Built on",
+   "headingHighlight": "Trust",
+   "headingEnd": "Delivered with Precision",
+   "subtext": "SAGEC brings together experience, local knowledge, and international standards — so every project stands as a testament to what Rwandan construction can achieve.",
+   "reasons": [
+    {
+     "title": "20+ Years of Proven Experience",
+     "description": "Two decades of delivering landmark structures across Rwanda, from commercial towers to civic institutions."
+    },
+    {
+     "title": "International Quality Standards",
+     "description": "Every project meets rigorous engineering benchmarks, ensuring safety, durability, and long-term value."
+    },
+    {
+     "title": "Deep Local Expertise",
+     "description": "Unmatched knowledge of Kigali's terrain, regulations, and supply chain — no learning curve, no surprises."
+    },
+    {
+     "title": "Multidisciplinary Expert Team",
+     "description": "Architects, structural engineers, and project managers working as one integrated unit on every build."
+    },
+    {
+     "title": "On-Time, On-Budget Delivery",
+     "description": "A disciplined project management process that consistently meets deadlines and respects agreed budgets."
+    },
+    {
+     "title": "Trusted by Rwanda's Leaders",
+     "description": "Chosen by government bodies, major investors, and private developers for projects that cannot afford failure."
+    }
+   ],
+   "media": {
+    "type": "image",
+    "alt": "SAGEC construction team at work on a Kigali project"
+   },
+   "ctaLabel": "Meet Our Team",
+   "ctaLink": "/about"
+  },
+  "cta": {
+   "eyebrow": "Ready to Build?",
+   "headingStart": "Let's Bring Your",
+   "headingHighlight": "Vision",
+   "headingEnd": "to Life",
+   "subline": "Whether you have detailed plans or just an idea — our team is ready to listen, advise, and deliver. Get in touch today.",
+   "primaryBtnLabel": "Start a Project",
+   "primaryBtnLink": "/contact",
+   "secondaryBtnLabel": "View Our Work",
+   "secondaryBtnLink": "/projects"
+  }
+ },
+ "about-page": {
+  "hero": {
+   "eyebrow": "Our Company",
+   "headline": "About SAGEC",
+   "subline": "Designing and engineering Rwanda's future, one landmark at a time."
+  },
+  "missionVisionEyebrow": "Who We Are",
+  "missionVisionHeadingStart": "Our",
+  "missionVisionHeadingHighlight": "Purpose",
+  "coreValuesEyebrow": "What Drives Us",
+  "coreValuesHeading": "Our Core Values",
+  "timelineEyebrow": "Our Journey",
+  "timelineHeading": "Milestones That Define Us",
+  "story": {
+   "eyebrow": "Our Story",
+   "heading": "Built From the Ground Up",
+   "paragraphs": [
+    {
+     "text": "SAGEC Ltd was founded with a singular vision — to deliver world-class architectural and engineering solutions that elevate Rwanda’s built environment. From our earliest projects in Kigali, we built a reputation for precision, innovation, and an unwavering commitment to quality."
+    },
+    {
+     "text": "Over the years, we have grown from a focused architectural practice into a full-service firm spanning structural engineering, MEP systems, project management, construction management, and interior design. Each discipline strengthened by the last — and every project a stepping stone to the next."
+    },
+    {
+     "text": "Today, SAGEC stands behind some of Kigali’s most recognisable landmarks. But for us, the most important structure is always the next one — and the trust our clients place in us to bring their vision to life."
+    }
+   ],
+   "quote": "We don’t just build structures. We build trust, one project at a time.",
+   "imageAlt": "SAGEC team at a construction site in Kigali"
+  },
+  "missionVision": {
+   "mission": {
+    "eyebrow": "Our Mission",
+    "heading": "Why We Build",
+    "text": "To deliver innovative, sustainable, and high-quality architectural and engineering solutions that transform Rwanda’s built environment — empowering communities, enabling commerce, and reflecting the ambition of a rising nation."
+   },
+   "vision": {
+    "eyebrow": "Our Vision",
+    "heading": "Where We’re Going",
+    "text": "To be East Africa’s most trusted architectural and engineering firm — recognised for excellence in design, integrity in delivery, and a legacy of landmark structures that stand for generations."
+   }
+  },
+  "coreValues": [
+   {
+    "iconKey": "quality",
+    "title": "Uncompromising Quality",
+    "description": "Every detail matters. We hold ourselves to the highest standards of craftsmanship and engineering rigour — on every project, at every scale."
+   },
+   {
+    "iconKey": "innovation",
+    "title": "Bold Innovation",
+    "description": "We embrace new ideas, technologies, and methodologies to solve complex challenges and deliver solutions that are ahead of their time."
+   },
+   {
+    "iconKey": "integrity",
+    "title": "Absolute Integrity",
+    "description": "We build trust the same way we build structures — carefully, consistently, and with total transparency. Our word is our contract."
+   },
+   {
+    "iconKey": "sustainability",
+    "title": "Sustainable Thinking",
+    "description": "We design and build with the future in mind — creating structures that are environmentally responsible and endure for generations."
+   }
+  ],
+  "milestones": [
+   {
+    "year": "20XX",
+    "badge": "Founded",
+    "title": "SAGEC Is Established",
+    "description": "SAGEC Ltd is founded in Kigali with a vision to deliver world-class architectural and engineering solutions across Rwanda."
+   },
+   {
+    "year": "20XX",
+    "badge": "First Major Project",
+    "title": "First Landmark Commission",
+    "description": "SAGEC completes its first major commercial project in Kigali, establishing a reputation for precision and quality delivery."
+   },
+   {
+    "year": "20XX",
+    "badge": "Milestone",
+    "title": "Kigali Business Plaza",
+    "description": "SAGEC delivers Kigali Business Plaza — a landmark mixed-use commercial development anchoring its district in central Kigali."
+   },
+   {
+    "year": "20XX",
+    "badge": "Interior Design",
+    "title": "Grand Legacy Hotel Interior",
+    "description": "A full interior fit-out for a premier hospitality client, showcasing SAGEC’s capability across luxury hospitality environments."
+   },
+   {
+    "year": "20XX",
+    "badge": "In Progress",
+    "title": "Rwanda Trade & Innovation Center",
+    "description": "SAGEC breaks ground on an institutional development in Remera — one of the firm’s most prestigious public commissions to date."
+   },
+   {
+    "year": "20XX",
+    "badge": "Expansion",
+    "title": "Growing Portfolio Across Rwanda",
+    "description": "With projects spanning Kigali, Musanze, and beyond, SAGEC continues to expand its footprint across commercial, residential, and infrastructure sectors."
+   }
+  ],
+  "aboutCTA": {
+   "eyebrow": "Work With Us",
+   "heading": "Ready to Build Something Great?",
+   "subline": "Whether you have a concept or a full brief — our team is ready to bring your vision to life.",
+   "primaryBtnLabel": "Start a Project",
+   "primaryBtnLink": "/contact",
+   "secondaryBtnLabel": "View Our Work",
+   "secondaryBtnLink": "/projects"
+  }
+ },
+ "contact-page": {
+  "hero": {
+   "eyebrow": "Reach Out",
+   "headline": "Let's Talk",
+   "subline": "Tell us about your vision and our team will get back to you within 24 hours."
+  },
+  "infoSection": {
+   "eyebrow": "Contact Details",
+   "heading": "We're Here For You"
+  },
+  "form": {
+   "eyebrow": "Send us a message",
+   "heading": "How can we help?",
+   "nameLabel": "First Name",
+   "namePlaceholder": "John",
+   "emailLabel": "Email Address",
+   "emailPlaceholder": "john@example.com",
+   "phoneLabel": "Phone Number",
+   "phonePlaceholder": "+250 7XX XXX XXX",
+   "messageLabel": "Message",
+   "messagePlaceholder": "Describe your project or enquiry in detail...",
+   "submitLabel": "Send Message",
+   "submitLoadingLabel": "Sending...",
+   "successMessage": "✓ Message sent! We'll get back to you within 24 hours.",
+   "errorMessage": "Something went wrong. Please try again or email us directly.",
+   "validationNameRequired": "First name is required",
+   "validationEmailRequired": "Email is required",
+   "validationEmailInvalid": "Enter a valid email",
+   "validationPhoneRequired": "Phone number is required",
+   "validationMessageRequired": "Message is required"
+  },
+  "map": {
+   "label": "SAGEC Ltd — Kigali, Rwanda",
+   "title": "SAGEC Ltd",
+   "subtitle": "Architectural & Engineering Solutions",
+   "embedSrc": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d255281.1908685827!2d29.92358695!3d-1.9440727!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca4258ed8e797%3A0xf32b36a5411d0bc8!2sKigali%2C%20Rwanda!5e0!3m2!1sen!2srw!4v1699000000000!5m2!1sen!2srw",
+   "directionsLink": "https://maps.google.com/?q=Kigali,Rwanda",
+   "directionsLabel": "Get Directions"
+  }
+ },
+ "seo-settings": {
+  "siteName": "SAGEC Ltd",
+  "defaultDescription": "SAGEC Ltd — Architectural and Engineering Solutions. Rwanda's leading firm delivering innovative architecture, engineering, and construction excellence in Kigali.",
+  "home": {},
+  "about": {
+   "title": "About Us",
+   "description": "Learn about SAGEC Ltd — Rwanda's architectural and engineering firm delivering landmark construction projects across Kigali."
+  },
+  "services": {
+   "title": "Our Services",
+   "description": "Architecture, structural engineering, MEP, and construction management services from SAGEC Ltd, Kigali."
+  },
+  "projects": {
+   "title": "Our Projects",
+   "description": "Explore landmark commercial, residential, and interior design projects delivered by SAGEC Ltd across Rwanda."
+  },
+  "testimonials": {
+   "title": "Testimonials",
+   "description": "See what clients say about working with SAGEC Ltd on their architecture and construction projects."
+  },
+  "blog": {
+   "title": "Blog",
+   "description": "Insights on architecture, engineering, and construction in Rwanda from the SAGEC Ltd team."
+  },
+  "contact": {
+   "title": "Contact Us",
+   "description": "Get in touch with SAGEC Ltd for your next architecture, engineering, or construction project in Rwanda."
+  }
+ },
+ "blog-page": {
+  "hero": {
+   "title": "Ideas That Shape Rwanda",
+   "breadcrumbLabel": "Blog"
+  },
+  "grid": {
+   "eyebrow": "News & Insights",
+   "heading": "Read Our Latest Articles",
+   "noResultsText": "No articles match your search.",
+   "searchPlaceholder": "Search here...",
+   "popularPostsLabel": "Popular Posts",
+   "popularTagsLabel": "Popular Tags"
+  },
+  "post": {
+   "heroTitle": "Blog Details",
+   "breadcrumbParentLabel": "Blog",
+   "notFoundText": "Sorry, we couldn't find that article.",
+   "backToBlogLabel": "Back to News & Insights",
+   "shareLabel": "Share:",
+   "relatedPostsLabel": "More Articles",
+   "commentsLabel": "Comments",
+   "leaveCommentLabel": "Leave a Comment",
+   "commentFormDisclaimer": "Comments are reviewed before appearing publicly.",
+   "commentNameLabel": "Your Name",
+   "commentEmailLabel": "Email Address",
+   "commentWebsiteLabel": "Website (optional)",
+   "commentMessageLabel": "Your Comment",
+   "commentSubmitLabel": "Post Comment"
+  }
+ },
+ "careers-page": {
+  "eyebrow": "Join Our Team",
+  "headline": "Build Rwanda’s Future With Us",
+  "headlineHighlight": "Future",
+  "subline": "SAGEC is always looking for talented architects, engineers, and construction professionals who are passionate about shaping Rwanda’s built environment.",
+  "applyInstructions": "Send your CV and a brief cover letter to our HR team. We review all applications and will be in touch if your profile matches our requirements.",
+  "noJobsHeading": "No Open Positions Right Now",
+  "noJobsText": "We don’t have any open roles at the moment, but we’re always interested in hearing from talented professionals. Send us your CV and we’ll keep you in mind for future opportunities."
+ },
+ "testimonials-page": {
+  "eyebrow": "Client Stories",
+  "headlineLine1": "What Our Clients",
+  "headlineLine2": "Say About Us",
+  "subline": "Real feedback from partners, developers, and institutions who trust SAGEC to bring their vision to life."
+ }
+}

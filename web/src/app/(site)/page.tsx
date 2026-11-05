@@ -1,12 +1,17 @@
-// TODO(Phase 6): placeholder until the public SAGEC site is ported into this app.
-// Never deployed: sagecltd.com goes live only after Phase 7.
-export const dynamic = 'force-dynamic'; // reads Site settings (Google Analytics) on every visit until Phase 6 adds caching
+import { HydrationBoundary } from '@tanstack/react-query';
+import HomePage from '@pages/HomePage';
+import { prefetch } from '@/lib/site/prefetch';
+import { buildMetadata } from '@/lib/site/seo';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export const generateMetadata = () => buildMetadata({ pageKey: 'home', path: '/' });
+
+export default async function Page() {
+  const { state } = await prefetch([["home-page"], ["services"], ["projects"], ["testimonials"], ["partners"]]);
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', padding: '4rem 1.5rem', textAlign: 'center' }}>
-      <h1>SAGEC Ltd</h1>
-      <p>The public website is being moved into this app. The CMS is at <a href="/admin">/admin</a>.</p>
-    </main>
+    <HydrationBoundary state={state}>
+      <HomePage />
+    </HydrationBoundary>
   );
 }

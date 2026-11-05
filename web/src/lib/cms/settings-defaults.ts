@@ -29,5 +29,8 @@ export const DEFAULT_SETTINGS = {
   seoTitle: 'SAGEC Ltd — Architectural and Engineering Solutions',
   seoDescription:
     "SAGEC Ltd — Architectural and Engineering Solutions. Rwanda's leading firm delivering innovative architecture, engineering, and construction excellence in Kigali.",
-  titleTemplate: '%s | SAGEC Ltd',
+  // Same title style as the current site ("About Us — SAGEC Ltd").
+  titleTemplate: '%s — SAGEC Ltd',
+  // The Google Analytics property the current site reports to (was hard-coded in frontend/index.html).
+  googleAnalyticsId: 'G-862Z8TQWQM',
 } as const;
