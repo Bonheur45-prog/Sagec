@@ -1,6 +1,6 @@
 # Checks every pull request that touches the new site (web/): database migration, schema drift,
 # typecheck, lint, unit tests, production build, and a quick start of the built site.
-# It never touches the VPS (the deploy workflow arrives in Phase 7, on main only).
+# It never touches the VPS (deploy.yml does that, on main only).
 # Same pattern as the BrightLink CI. The repo is public, so these minutes are free.
 name: Web CI
 

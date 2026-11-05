@@ -1,0 +1,147 @@
+# Builds the SAGEC website on GitHub (not on the VPS, to save its memory) and deploys it on every push to
+# main that changes web/. Same pattern as BrightLink and Oak Elite Home. Guide: web/docs/DEPLOY.md.
+# Needs these repository secrets (Settings → Secrets and variables → Actions):
+#   DATABASE_URL, R2_PUBLIC_HOSTNAME, SITE_URL  (same values as the VPS .env)
+#   VPS_HOST, VPS_USER, VPS_SSH_KEY              (server address, login user, private SSH key)
+# PostgreSQL on the VPS only listens to the VPS itself, so the migration runs through an SSH tunnel.
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', '.github/workflows/deploy.yml']
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: 'Also create the starter Site settings. Only needed once, on a new database (safe to repeat).'
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      R2_PUBLIC_HOSTNAME: ${{ secrets.R2_PUBLIC_HOSTNAME }}
+      SITE_URL: ${{ secrets.SITE_URL }}
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      # Until the server is set up, the secrets are missing: skip with a note instead of failing every merge.
+      - name: Check the deploy settings
+        id: cfg
+        working-directory: .
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          missing=""
+          for v in VPS_HOST VPS_USER VPS_SSH_KEY DATABASE_URL SITE_URL R2_PUBLIC_HOSTNAME; do
+            [ -n "${!v}" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            echo "::notice title=Deploy skipped::Not set in Settings → Secrets and variables → Actions:$missing. See web/docs/DEPLOY.md."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v5
+        if: steps.cfg.outputs.ready == 'true'
+
+      - uses: actions/setup-node@v5
+        if: steps.cfg.outputs.ready == 'true'
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        if: steps.cfg.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Prepare SSH
+        if: steps.cfg.outputs.ready == 'true'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Open a tunnel to the database on the VPS
+        if: steps.cfg.outputs.ready == 'true'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          read -r DB_HOST DB_PORT <<< "$(node -e 'const u = new URL(process.env.DATABASE_URL); console.log(u.hostname.replace(/^\[|\]$/g, ""), u.port || 5432)')"
+          case "$DB_HOST" in
+            localhost|127.0.0.1|::1|"$VPS_HOST") ;;
+            *) echo "Database is at $DB_HOST: connecting directly."; exit 0 ;;
+          esac
+          LOCAL_PORT=15432
+          ssh -i ~/.ssh/id_deploy -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 \
+            -f -N -L "$LOCAL_PORT:127.0.0.1:$DB_PORT" "$VPS_USER@$VPS_HOST"
+          TUNNELED=$(node -e 'const u = new URL(process.env.DATABASE_URL); u.hostname = "127.0.0.1"; u.port = process.argv[1]; console.log(u.toString())' "$LOCAL_PORT")
+          echo "::add-mask::$TUNNELED"
+          echo "DATABASE_URL=$TUNNELED" >> "$GITHUB_ENV"
+
+      - name: Apply database changes
+        if: steps.cfg.outputs.ready == 'true'
+        run: npx prisma migrate deploy
+
+      - name: Create the starter Site settings
+        if: steps.cfg.outputs.ready == 'true' && github.event_name == 'workflow_dispatch' && inputs.seed
+        run: npm run db:seed
+
+      - name: Build
+        if: steps.cfg.outputs.ready == 'true'
+        run: npm run build
+
+      - name: Package the standalone app
+        if: steps.cfg.outputs.ready == 'true'
+        run: |
+          mkdir -p .next/standalone/public
+          cp -r public/. .next/standalone/public/
+          cp -r .next/static .next/standalone/.next/static
+          cp deploy/ecosystem.config.cjs .next/standalone/
+          tar -czf release.tgz -C .next/standalone .
+
+      - name: Upload and switch to the new release
+        if: steps.cfg.outputs.ready == 'true'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          SSH="ssh -i ~/.ssh/id_deploy $VPS_USER@$VPS_HOST"
+          RELEASE=$(date +%Y%m%d%H%M%S)-${GITHUB_SHA::7}
+          scp -i ~/.ssh/id_deploy release.tgz "$VPS_USER@$VPS_HOST:/var/www/sagec/release.tgz"
+          $SSH "set -e
+            cd /var/www/sagec
+            mkdir -p releases/$RELEASE
+            tar -xzf release.tgz -C releases/$RELEASE && rm release.tgz
+            ln -sfn releases/$RELEASE current
+            pm2 startOrReload /var/www/sagec/current/ecosystem.config.cjs --update-env
+            pm2 save
+            # The new release must answer within 30 seconds, otherwise the deploy fails and shows the site's log.
+            ok=0
+            for i in \$(seq 1 30); do
+              if curl -sf -o /dev/null http://127.0.0.1:3022/admin/login; then ok=1; break; fi
+              sleep 1
+            done
+            if [ \$ok = 0 ]; then pm2 logs sagec --lines 40 --nostream; exit 1; fi
+            echo 'Site answers on port 3022.'
+            # Keep the last 3 releases (to roll back quickly), delete older ones.
+            ls -1dt releases/* | tail -n +4 | xargs -r rm -rf"
