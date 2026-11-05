@@ -45,9 +45,9 @@ both, logout locks the CMS, no JavaScript errors, phone layout.
 ## Not tested — check these yourself
 - **Real Cloudflare R2** (only an emulator): upload, the public address, the CORS rule for video uploads.
 - **Video upload** (needs the R2 CORS rule; not exercised against the emulator).
-- `prisma migrate deploy` itself: Prisma's engines could not be downloaded in the sandbox, so the init SQL was
+- ~~`prisma migrate deploy`~~ confirmed by Web CI on PR #3. (Prisma's engines could not be downloaded in the sandbox, so the init SQL was
   taken from BrightLink's Prisma-generated migration for the same tables and applied with `psql`. The CI
-  step "Migrations match the schema" runs Prisma's own comparison on GitHub and fails if they ever differ.
+  step "Migrations match the schema" runs Prisma's own comparison on GitHub and fails if they ever differ.)
 
 ## Decisions to keep
 - English only. Text lives on the row; no `*Translation` tables, no locale routes, no language switcher.
