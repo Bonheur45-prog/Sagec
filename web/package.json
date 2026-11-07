@@ -19,7 +19,8 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
-    "user:create": "tsx scripts/create-user.ts"
+    "user:create": "tsx scripts/create-user.ts",
+    "import:payload": "tsx --conditions=react-server scripts/import-payload.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1152.0",

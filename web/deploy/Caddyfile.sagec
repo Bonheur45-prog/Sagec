@@ -1,0 +1,21 @@
+# Add these two blocks to the end of /etc/caddy/Caddyfile on the VPS, then check and reload:
+#   sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo systemctl reload caddy
+# A reload does not interrupt the other sites; a file with a mistake is refused and the old settings stay.
+# Caddy gets and renews the HTTPS certificates on its own (DNS records must point at the VPS, Cloudflare proxy off).
+
+sagecltd.com {
+	encode zstd gzip
+	request_body {
+		max_size 32MB
+	}
+	reverse_proxy 127.0.0.1:3022 {
+		# The site reads the visitor's address from Cf-Connecting-Ip first (for when Cloudflare's proxy is on).
+		# With the proxy off, anyone could send that header and dodge the contact-form limit, so drop it here.
+		header_up -Cf-Connecting-Ip
+	}
+}
+
+# One address for search engines: www sends visitors to the main address.
+www.sagecltd.com {
+	redir https://sagecltd.com{uri} permanent
+}

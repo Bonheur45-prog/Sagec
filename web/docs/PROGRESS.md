@@ -102,6 +102,23 @@ needs a logo · trash → restore as draft → delete for good (photos kept) · 
 - **Subscribers** (`/admin/subscribers`) with CSV export.
 - Dashboard warns when email (SMTP) or spam protection (Turnstile) is not set up.
 
+## PR 7 — public site in Next.js (merged)
+The old Vite site lives in `src/site`, served by Next.js with every page's content filled on the server; CMS → Pages
+edits every page's texts and photos; contact form, comments, SEO metadata, sitemap, redirects, Google Analytics.
+
+## PR 8 — import, deploy, backups
+- `npm run import:payload` (or Actions → Import from the old CMS): copies everything from the old Payload CMS
+  through its web address, photos and videos into R2. Re-runnable without duplicates.
+- Actions → Deploy to VPS (port 3022, PM2 `sagec`, `/var/www/sagec`), Caddy block, nightly database backup.
+- Guide: `docs/DEPLOY.md`. `cms/` (Payload) is removed after launch, once the old CMS is switched off.
+
+## Verified (PR 8)
+Import run against a stand-in Payload server built from SAGEC's real field lists: 8 photos/videos copied to the S3
+emulator (WebP sizes), 9 pages, services, projects with gallery and services, reviews, partners, open and closed
+jobs, author, category, article (all six old block types → editor HTML), approved and waiting comments, a contact
+message; a missing photo reported and skipped; second run copies nothing new. The built site then showed the
+imported hero, pages and article in Chrome with no errors.
+
 ## Verified (PR 6)
 Same sandbox: typecheck · lint · 41 unit tests · **a real email sent** through an SMTP server to the Site settings
 address with Reply-To = visitor, and both failure cases recorded on the message · in Chrome, 22 checks: SAGEC's
