@@ -69,6 +69,10 @@ jobs:
         if: steps.cfg.outputs.ready == 'true'
         run: npm ci
 
+      - name: Check the database address
+        if: steps.cfg.outputs.ready == 'true'
+        run: node deploy/check-db-url.mjs
+
       - name: Prepare SSH
         if: steps.cfg.outputs.ready == 'true'
         env:
