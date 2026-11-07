@@ -110,7 +110,11 @@ edits every page's texts and photos; contact form, comments, SEO metadata, sitem
 - `npm run import:payload` (or Actions → Import from the old CMS): copies everything from the old Payload CMS
   through its web address, photos and videos into R2. Re-runnable without duplicates.
 - Actions → Deploy to VPS (port 3022, PM2 `sagec`, `/var/www/sagec`), Caddy block, nightly database backup.
-- Guide: `docs/DEPLOY.md`. `cms/` (Payload) is removed after launch, once the old CMS is switched off.
+- Guide: `docs/DEPLOY.md`.
+
+## Live (7 Nov 2026)
+sagecltd.com runs on the VPS; the old CMS content (76 photos/videos, 8 pages, 6 services, 6 projects, 6 reviews,
+7 articles, 7 comments) was imported. The old Payload code (`cms/`) has been removed from the repo.
 
 ## Verified (PR 8)
 Import run against a stand-in Payload server built from SAGEC's real field lists: 8 photos/videos copied to the S3
