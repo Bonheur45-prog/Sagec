@@ -1,0 +1,84 @@
+# Finishes the server side of SAGEC from GitHub, so nothing has to be typed on the VPS.
+# Run by hand: Actions → "Server setup" → Run workflow. Safe to run again (nothing is added twice).
+#  - always: installs the nightly database backup (02:17 every night, 14 days kept) and makes one backup now
+#  - "Go live" ticked: adds sagecltd.com + www to Caddy (HTTPS), checks the file, reloads Caddy. The other
+#    sites keep running; if the check fails the old Caddy file is put back. Tick it right before pointing the
+#    domain at the VPS in Cloudflare (web/docs/DEPLOY.md step 9).
+name: Server setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      go_live:
+        description: 'Go live: add sagecltd.com to Caddy (then switch the DNS in Cloudflare)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Nightly backup
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          scp -i ~/.ssh/id_deploy web/deploy/backup-sagec.sh "$VPS_USER@$VPS_HOST:/var/www/sagec/backup-sagec.sh"
+          ssh -i ~/.ssh/id_deploy "$VPS_USER@$VPS_HOST" 'set -e
+            chmod 700 /var/www/sagec/backup-sagec.sh
+            command -v pg_dump >/dev/null || { echo "::error::pg_dump is not installed on the VPS"; exit 1; }
+            LINE="17 2 * * * /var/www/sagec/backup-sagec.sh >> /var/www/sagec/backup.log 2>&1"
+            if crontab -l 2>/dev/null | grep -qF "/var/www/sagec/backup-sagec.sh"; then
+              echo "Nightly backup already scheduled."
+            else
+              (crontab -l 2>/dev/null; echo "$LINE") | crontab -
+              echo "Nightly backup scheduled for 02:17."
+            fi
+            /var/www/sagec/backup-sagec.sh
+            ls -lh /var/www/sagec/backups | tail -n 3'
+
+      - name: Go live in Caddy
+        if: inputs.go_live
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          scp -i ~/.ssh/id_deploy web/deploy/Caddyfile.sagec "$VPS_USER@$VPS_HOST:/var/www/sagec/Caddyfile.sagec"
+          ssh -i ~/.ssh/id_deploy "$VPS_USER@$VPS_HOST" 'set -e
+            if ! sudo -n true 2>/dev/null; then
+              echo "::error title=Needs sudo::This login cannot use sudo without a password, so Caddy cannot be changed from GitHub. Run on the VPS: sudo bash -c \"cat /var/www/sagec/Caddyfile.sagec >> /etc/caddy/Caddyfile\" && sudo systemctl reload caddy"
+              exit 1
+            fi
+            CF=/etc/caddy/Caddyfile
+            if sudo grep -qE "^sagecltd\.com[[:space:]]*\{" "$CF"; then
+              echo "sagecltd.com is already in Caddy."
+            else
+              BACKUP="$CF.before-sagec-$(date +%Y%m%d%H%M%S)"
+              sudo cp "$CF" "$BACKUP"
+              printf "\n" | sudo tee -a "$CF" >/dev/null
+              sudo tee -a "$CF" < /var/www/sagec/Caddyfile.sagec >/dev/null
+              if ! sudo caddy validate --config "$CF" --adapter caddyfile; then
+                sudo cp "$BACKUP" "$CF"
+                echo "::error::The Caddy check failed; the previous Caddyfile was put back. Nothing changed for the other sites."
+                exit 1
+              fi
+              sudo systemctl reload caddy
+              echo "Caddy reloaded with sagecltd.com (copy of the previous file: $BACKUP)."
+            fi'
+          echo "::notice title=Next::Now point sagecltd.com at the VPS in Cloudflare (web/docs/DEPLOY.md step 9). HTTPS starts within a minute."

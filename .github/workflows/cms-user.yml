@@ -1,0 +1,72 @@
+# Creates a CMS login, or sets a new password for an existing one (it then logs that person out everywhere).
+# Run by hand: Actions → "CMS login" → Run workflow → email + name.
+# The password is never typed into the form (on a public repo the form values are visible): it comes from the
+# repository secret CMS_USER_PASSWORD (Settings → Secrets and variables → Actions), at least 12 characters.
+# After use you can delete that secret; more people can then be added from the CMS itself (Users).
+name: CMS login
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'Email to log in with'
+        required: true
+        type: string
+      name:
+        description: 'Full name (shown in the CMS)'
+        required: true
+        type: string
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  user:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      CMS_USER_PASSWORD: ${{ secrets.CMS_USER_PASSWORD }}
+      USER_EMAIL: ${{ inputs.email }}
+      USER_NAME: ${{ inputs.name }}
+    steps:
+      - name: Check the password secret
+        working-directory: .
+        run: |
+          if [ -z "$CMS_USER_PASSWORD" ]; then
+            echo "::error title=CMS_USER_PASSWORD missing::Add the repository secret CMS_USER_PASSWORD (the password for this login, 12+ characters) and run again."
+            exit 1
+          fi
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Check the database address
+        run: node deploy/check-db-url.mjs
+      - name: Open a tunnel to the database on the VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+          read -r DB_HOST DB_PORT <<< "$(node -e 'const u = new URL(process.env.DATABASE_URL); console.log(u.hostname.replace(/^\[|\]$/g, ""), u.port || 5432)')"
+          case "$DB_HOST" in localhost|127.0.0.1|::1|"$VPS_HOST") ;; *) exit 0 ;; esac
+          ssh -i ~/.ssh/id_deploy -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -f -N -L "15432:127.0.0.1:$DB_PORT" "$VPS_USER@$VPS_HOST"
+          TUNNELED=$(node -e 'const u = new URL(process.env.DATABASE_URL); u.hostname = "127.0.0.1"; u.port = "15432"; console.log(u.toString())')
+          echo "::add-mask::$TUNNELED"
+          echo "DATABASE_URL=$TUNNELED" >> "$GITHUB_ENV"
+      - name: Create the login (or set its new password)
+        run: printf '%s\n%s\n%s\n%s\n' "$USER_EMAIL" "$USER_NAME" "$CMS_USER_PASSWORD" "$CMS_USER_PASSWORD" | npm run -s user:create

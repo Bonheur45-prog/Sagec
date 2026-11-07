@@ -82,13 +82,14 @@ Check on the VPS: `pm2 ls` shows `sagec` online next to the others; `curl -sI ht
 
 ## 5. First CMS login
 
-There is no sign-up page, so the first user is made with a script from your own copy of the repo, through a tunnel:
-```bash
-ssh -N -L 15432:127.0.0.1:5432 <you>@<VPS>        # terminal 1: leave it open
-cd Sagec/web && npm ci                             # terminal 2
-DATABASE_URL="postgresql://sagec:<password>@127.0.0.1:15432/sagec?schema=public" npm run user:create
-```
-More users are added later in the CMS itself (**Users**).
+1. GitHub → Settings → Secrets and variables → Actions → add `CMS_USER_PASSWORD` = the password you want (12+ characters).
+2. Actions → **CMS login** → Run workflow → your email and name.
+
+The same workflow sets a new password for an existing login (and logs it out everywhere). After the first login,
+add other people in the CMS itself (**Users**); the `CMS_USER_PASSWORD` secret can then be deleted.
+
+(Without GitHub: from your own copy of the repo through a tunnel, `ssh -N -L 15432:127.0.0.1:5432 <you>@<VPS>`, then
+`DATABASE_URL="postgresql://sagec:<password>@127.0.0.1:15432/sagec?schema=public" npm run user:create` in `web/`.)
 
 ## 6. Copy the content from the old CMS
 
@@ -113,13 +114,12 @@ Open http://localhost:3022 (the site) and http://localhost:3022/admin/login (the
 **CMS → Pages**, **Media library** (photos without a description are listed there), and send yourself a message
 from the contact form (it should arrive by email and appear in **CMS → Messages**).
 
-## 8. Caddy
+## 8. Caddy (with step 9)
 
-Add the two blocks from `web/deploy/Caddyfile.sagec` to the end of `/etc/caddy/Caddyfile`, then:
-```bash
-sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile && sudo systemctl reload caddy
-```
-A reload does not interrupt the other sites; a file with a mistake is refused and the old settings stay.
+Actions → **Server setup** → tick **Go live** → Run. It adds the two blocks from `web/deploy/Caddyfile.sagec` to
+`/etc/caddy/Caddyfile`, checks the file and reloads Caddy (the other sites keep running; if the check fails, the
+previous file is put back). It needs a VPS login that may use `sudo` without a password; otherwise it stops and
+prints the one command to run on the VPS. Do step 9 right after.
 
 ## 9. Switch the domain (the moment it goes live)
 
@@ -136,14 +136,11 @@ Keep the old CMS for a week, then switch it off.
 
 ## 10. Nightly backup
 
-```bash
-install -m 700 <repo>/web/deploy/backup-sagec.sh /var/www/sagec/backup-sagec.sh   # or paste it with nano
-crontab -e     # add this line:
-17 2 * * * /var/www/sagec/backup-sagec.sh >> /var/www/sagec/backup.log 2>&1
-```
-Every night at 02:17 the database is saved to `/var/www/sagec/backups` (14 days kept). If an rclone remote called
-`gdrive` exists on the VPS, each copy also goes to Google Drive (`sagec-backups`, 30 days). The photos themselves
-are safe in R2. Restore: `gunzip -c backups/sagec-<date>.sql.gz | psql "<DATABASE_URL without ?schema=public>"`.
+Actions → **Server setup** → Run (no box needed). It copies `web/deploy/backup-sagec.sh` to the VPS, schedules it
+every night at 02:17 and makes a first backup straight away (shown in the log). The database is saved to
+`/var/www/sagec/backups` (14 days kept). If an rclone remote called `gdrive` exists on the VPS, each copy also goes
+to Google Drive (`sagec-backups`, 30 days). The photos themselves are safe in R2.
+Restore: `gunzip -c backups/sagec-<date>.sql.gz | psql "<DATABASE_URL without ?schema=public>"`.
 
 ---
 
