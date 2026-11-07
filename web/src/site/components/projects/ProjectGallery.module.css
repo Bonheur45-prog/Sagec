@@ -1,0 +1,246 @@
+/* Centred photo carousel for a project page (see ProjectGallery.jsx). */
+.wrap {
+  display: grid;
+  gap: var(--space-10);
+  color: var(--color-text-white);
+}
+
+.header {
+  text-align: center;
+  display: grid;
+  gap: var(--space-3, 12px);
+}
+
+.heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--color-text-white);
+  line-height: 1.15;
+}
+
+.sub {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.accent {
+  color: var(--color-orange);
+  font-weight: 500;
+}
+
+/* The stage keeps the middle photo's shape; side photos are placed relative to it. */
+.stage {
+  --w: min(58%, 760px);
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 6.6;
+  outline: none;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.stage:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 8px;
+  border-radius: var(--radius-lg);
+}
+
+.slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--w);
+  aspect-ratio: 16 / 8.8;
+  margin: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-navy);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease;
+  will-change: transform;
+}
+
+.slide[data-pos='center'] {
+  z-index: 3;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.slide[data-pos='left'],
+.slide[data-pos='right'] {
+  z-index: 2;
+  cursor: pointer;
+  filter: brightness(0.62);
+}
+
+.slide[data-pos='left'] {
+  transform: translate(calc(-50% - 42%), -50%) scale(0.74);
+}
+
+.slide[data-pos='right'] {
+  transform: translate(calc(-50% + 42%), -50%) scale(0.74);
+}
+
+.slide[data-pos='left']:hover,
+.slide[data-pos='right']:hover {
+  filter: brightness(0.8);
+}
+
+.slide[data-pos='farLeft'],
+.slide[data-pos='farRight'] {
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.slide[data-pos='farLeft'] {
+  transform: translate(calc(-50% - 70%), -50%) scale(0.6);
+}
+
+.slide[data-pos='farRight'] {
+  transform: translate(calc(-50% + 70%), -50%) scale(0.6);
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Caption at the top of the middle photo, over a soft dark fade for legibility. */
+.caption {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: var(--space-5, 20px) var(--space-6, 24px) var(--space-12);
+  background: linear-gradient(to bottom, rgba(10, 16, 30, 0.55), rgba(10, 16, 30, 0));
+  text-align: center;
+  pointer-events: none;
+}
+
+.captionTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(16px, 1.6vw, 22px);
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.captionTitle strong {
+  font-weight: 700;
+}
+
+.captionPlace {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Round white arrows sitting on the edges of the middle photo. */
+.arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: var(--color-navy);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.arrowLeft {
+  left: calc(50% - var(--w) / 2);
+  transform: translate(-50%, -50%);
+}
+
+.arrowRight {
+  left: calc(50% + var(--w) / 2);
+  transform: translate(-50%, -50%);
+}
+
+.arrow:hover {
+  background: var(--color-orange);
+  color: #fff;
+}
+
+.arrow:active {
+  transform: translate(-50%, -50%) scale(0.94);
+}
+
+.arrow:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 3px;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.dot[data-active] {
+  background: #fff;
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
+.dot:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 3px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Phones: the middle photo takes most of the width, neighbours just peek in. */
+@media (max-width: 768px) {
+  .wrap { gap: var(--space-6, 24px); }
+  .stage { --w: 80%; aspect-ratio: 16 / 10.6; }
+  .slide { aspect-ratio: 5 / 4; }
+  .slide[data-pos='left'] { transform: translate(calc(-50% - 52%), -50%) scale(0.8); }
+  .slide[data-pos='right'] { transform: translate(calc(-50% + 52%), -50%) scale(0.8); }
+  .arrow { width: 40px; height: 40px; }
+  .arrowLeft { left: calc(50% - var(--w) / 2 + 26px); }
+  .arrowRight { left: calc(50% + var(--w) / 2 - 26px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: opacity 0.2s linear; }
+}

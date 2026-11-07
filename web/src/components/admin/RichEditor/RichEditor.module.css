@@ -1,10 +1,10 @@
-.editor { border: 1px solid var(--line); background: var(--white); }
-.toolbar { position: sticky; top: 0; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: var(--space-2); background: var(--plaster); border-bottom: 1px solid var(--line); }
-.tool { min-width: 2rem; min-height: 2rem; padding: 0 var(--space-2); border: 1px solid transparent; background: transparent; font: inherit; font-size: var(--step--1); cursor: pointer; }
+.editor { border: 1px solid var(--line); background: var(--white); border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); }
+.toolbar { position: sticky; top: var(--topbar-h, 0px); border-radius: var(--radius-panel) var(--radius-panel) 0 0; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: var(--space-2); background: var(--plaster); border-bottom: 1px solid var(--line); }
+.tool { min-width: 2rem; min-height: 2rem; padding: 0 var(--space-2); border: 1px solid transparent; border-radius: 8px; background: transparent; font: inherit; font-size: var(--step--1); cursor: pointer; }
 .tool:hover { border-color: var(--line); background: var(--white); }
-.tool[aria-pressed='true'] { background: var(--chocolate-800); color: var(--white); }
+.tool[aria-pressed='true'] { background: var(--navy-800); color: var(--white); }
 .tool:disabled { opacity: 0.4; cursor: default; }
-.select { min-height: 2rem; border: 1px solid var(--line); background: var(--white); font: inherit; font-size: var(--step--1); }
+.select { min-height: 2rem; border: 1px solid var(--line); background: var(--white); font: inherit; font-size: var(--step--1); border-radius: 8px; }
 .sep { width: 1px; height: 1.5rem; margin: 0 var(--space-1); background: var(--line); }
 .loading { padding: var(--space-5); color: var(--text-muted); border: 1px solid var(--line); }
 .content { min-height: 24rem; padding: var(--space-5); outline: none; line-height: 1.7; max-width: 46rem; }

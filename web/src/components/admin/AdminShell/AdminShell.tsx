@@ -1,8 +1,5 @@
-import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { AdminNav, type AdminNavLink } from '@/components/admin/AdminNav/AdminNav';
-import { ConfirmButton } from '@/components/admin/ConfirmButton/ConfirmButton';
-import styles from './AdminShell.module.css';
+import { AdminFrame, type AdminNavGroup } from '@/components/admin/AdminNav/AdminNav';
 
 type Props = {
   businessName: string;
@@ -13,86 +10,56 @@ type Props = {
   children: ReactNode;
 };
 
-/**
- * CMS frame: navy sidebar with navigation (top bar on phones) and the page content.
- * The menu only lists screens that exist. Each build phase adds its own links:
- * (Page texts arrive with the public site.)
- */
+/** The CMS menu (the frame itself is drawn by AdminFrame). The menu only lists screens that exist. */
 export function AdminShell({ businessName, user, counts, logoutAction, children }: Props) {
-  const groups: { label?: string; links: AdminNavLink[] }[] = [
+  const groups: AdminNavGroup[] = [
     {
       links: [
-        { href: '/admin', label: 'Dashboard' },
-        { href: '/admin/messages', label: 'Messages', count: counts?.messages },
-        { href: '/admin/media', label: 'Media library' },
+        { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
+        { href: '/admin/messages', label: 'Messages', icon: 'messages', count: counts?.messages },
+        { href: '/admin/media', label: 'Media library', icon: 'media' },
       ],
     },
     {
-      label: 'Content',
+      label: 'Website content',
       links: [
-        { href: '/admin/pages', label: 'Pages' },
-        { href: '/admin/blog', label: 'Blog' },
-        { href: '/admin/comments', label: 'Comments', count: counts?.comments },
-        { href: '/admin/services', label: 'Services' },
-        { href: '/admin/projects', label: 'Projects' },
-        { href: '/admin/testimonials', label: 'Testimonials' },
-        { href: '/admin/partners', label: 'Partners' },
-        { href: '/admin/jobs', label: 'Job openings' },
-        { href: '/admin/subscribers', label: 'Subscribers' },
-        { href: '/admin/trash', label: 'Trash' },
+        { href: '/admin/pages', label: 'Pages', icon: 'pages' },
+        { href: '/admin/services', label: 'Services', icon: 'services' },
+        { href: '/admin/projects', label: 'Projects', icon: 'projects' },
+        { href: '/admin/testimonials', label: 'Testimonials', icon: 'testimonials' },
+        { href: '/admin/partners', label: 'Partners', icon: 'partners' },
+        { href: '/admin/jobs', label: 'Job openings', icon: 'jobs' },
+      ],
+    },
+    {
+      label: 'Blog',
+      links: [
+        { href: '/admin/blog', label: 'Articles', icon: 'blog' },
+        { href: '/admin/comments', label: 'Comments', icon: 'comments', count: counts?.comments },
+        { href: '/admin/subscribers', label: 'Subscribers', icon: 'subscribers' },
       ],
     },
     {
       label: 'Site-wide',
       links: [
-        { href: '/admin/header', label: 'Header' },
-        { href: '/admin/footer', label: 'Footer' },
-        { href: '/admin/settings', label: 'Site settings' },
+        { href: '/admin/header', label: 'Header', icon: 'header' },
+        { href: '/admin/footer', label: 'Footer', icon: 'footer' },
+        { href: '/admin/settings', label: 'Site settings', icon: 'settings' },
       ],
     },
     {
-      label: 'System',
+      label: 'Administration',
       links: [
-        { href: '/admin/users', label: 'Users' },
-        { href: '/admin/activity', label: 'Activity' },
+        { href: '/admin/users', label: 'Users', icon: 'users' },
+        { href: '/admin/activity', label: 'Activity', icon: 'activity' },
+        { href: '/admin/trash', label: 'Trash', icon: 'trash' },
       ],
     },
   ];
 
   return (
-    <div className={styles.shell}>
-      <a href="#admin-main" className={styles.skip}>
-        Skip to content
-      </a>
-      <aside className={styles.sidebar}>
-        <div className={styles.brand}>
-          <Link href="/admin" className={styles.brandLink} aria-label={`${businessName} — Dashboard`}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- small fixed brand file, no resizing needed */}
-            <img src="/images/brand/sagec-logo-light.png" alt={businessName} width={426} height={110} className={styles.brandLogo} />
-          </Link>
-          <span className={styles.brandSub}>Content manager</span>
-        </div>
-        <AdminNav groups={groups} />
-        <div className={styles.account}>
-          <p className={styles.user}>
-            <span className={styles.userName}>{user.name}</span>
-            <span className={styles.userEmail}>{user.email}</span>
-          </p>
-          <div className={styles.accountActions}>
-            <Link href="/" className={styles.viewSite} target="_blank" rel="noopener">
-              View website ↗
-            </Link>
-            <form action={logoutAction}>
-              <ConfirmButton variant="ghost" size="sm" className={styles.logout}>
-                Log out
-              </ConfirmButton>
-            </form>
-          </div>
-        </div>
-      </aside>
-      <main id="admin-main" className={styles.main}>
-        <div className={styles.content}>{children}</div>
-      </main>
-    </div>
+    <AdminFrame groups={groups} businessName={businessName} user={user} logoutAction={logoutAction}>
+      {children}
+    </AdminFrame>
   );
 }

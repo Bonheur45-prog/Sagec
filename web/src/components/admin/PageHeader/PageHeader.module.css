@@ -5,8 +5,6 @@
   justify-content: space-between;
   gap: var(--space-4);
   margin-bottom: var(--space-6);
-  padding-bottom: var(--space-5);
-  border-bottom: 1px solid var(--line-accent);
 }
 
 .text {
@@ -14,9 +12,16 @@
 }
 
 .back {
-  display: inline-block;
-  margin-bottom: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+  padding: 0.2rem 0.7rem 0.2rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--white);
   font-size: var(--step--1);
+  font-weight: 500;
   color: var(--text-muted);
   text-decoration: none;
 }
@@ -27,12 +32,15 @@
 }
 
 .title {
-  font-size: var(--step-3);
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: var(--lh-tight);
 }
 
 .description {
   margin-top: var(--space-2);
+  font-size: 0.98rem;
   max-width: var(--measure);
   color: var(--text-muted);
 }
