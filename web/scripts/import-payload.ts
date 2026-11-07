@@ -96,6 +96,11 @@ async function all(collection: string, optional = false): Promise<Doc[]> {
     try {
       body = await api(`/${collection}?limit=100&page=${page}&depth=0&sort=createdAt`);
     } catch (error) {
+      if (/HTTP 404/.test((error as Error).message)) {
+        // That part does not exist in this version of the old CMS (e.g. job openings came later).
+        console.log(`  (${collection}: not in the old CMS; skipped)`);
+        return out;
+      }
       if (optional) {
         console.log(`  (${collection}: not readable — ${(error as Error).message}; skipped)`);
         return out;
@@ -148,6 +153,53 @@ function probeVideo(data: Buffer): { width: number; height: number; durationSec:
   }
 }
 
+/**
+ * Downloads an old media file. Tries the address Payload gives (moved onto PAYLOAD_URL when it names
+ * localhost, as it does when the old CMS runs on a computer), then Payload's file address by name, then
+ * the largest resized copy Payload made. In --check mode only the first bytes are read.
+ */
+async function downloadFile(doc: Doc, checkOnly: boolean): Promise<Buffer> {
+  const filename = str(doc.filename, 500);
+  const candidates: string[] = [];
+  const add = (u: string) => {
+    if (!u) return;
+    try {
+      const url = new URL(u, BASE);
+      if (['localhost', '127.0.0.1', '0.0.0.0'].includes(url.hostname)) {
+        const base = new URL(BASE);
+        url.protocol = base.protocol;
+        url.host = base.host;
+      }
+      if (!candidates.includes(url.toString())) candidates.push(url.toString());
+    } catch {
+      // not an address
+    }
+  };
+  add(str(doc.url, 2000));
+  if (filename) add(`/api/media/file/${encodeURIComponent(filename)}`);
+  const sizes = Object.values(obj(doc.sizes)).map(obj).filter((s) => str(s.url)).sort((a, b) => (Number(b.width) || 0) - (Number(a.width) || 0));
+  for (const s of sizes) add(str(s.url, 2000));
+  const tried: string[] = [];
+  for (const u of candidates) {
+    try {
+      const res = await fetch(u, { signal: AbortSignal.timeout(checkOnly ? 30_000 : 180_000) });
+      if (!res.ok) {
+        tried.push(`${new URL(u).pathname} → HTTP ${res.status}`);
+        await res.body?.cancel();
+        continue;
+      }
+      if (checkOnly) {
+        await res.body?.cancel();
+        return Buffer.alloc(0);
+      }
+      return Buffer.from(await res.arrayBuffer());
+    } catch (error) {
+      tried.push(`${u} → ${(error as Error).message}`);
+    }
+  }
+  throw new Error(candidates.length ? `file not found on the old CMS (${tried.join('; ')})` : 'no file address');
+}
+
 /** Copies one old media file (by id) into R2 + the media library and returns the new id. */
 async function media(old: unknown, fallbackAlt = ''): Promise<string | null> {
   const id = idOf(old);
@@ -157,20 +209,14 @@ async function media(old: unknown, fallbackAlt = ''): Promise<string | null> {
   try {
     doc ??= await api(`/media/${encodeURIComponent(id)}?depth=0`);
     mediaDocs.set(id, doc);
-    const url = str(doc.url, 2000);
-    if (!url) throw new Error('no file address');
     const alt = (str(doc.alt, 300) || fallbackAlt).slice(0, 300);
     const mime = str(doc.mimeType, 100);
+    const data = await downloadFile(doc, CHECK);
     if (CHECK) {
-      const head = await fetch(new URL(url, BASE), { method: 'HEAD', signal: AbortSignal.timeout(30_000) });
-      if (!head.ok) throw new Error(`HTTP ${head.status}`);
       mediaMap.set(id, `check-${id}`);
       tally('photos and videos', true);
       return mediaMap.get(id)!;
     }
-    const res = await fetch(new URL(url, BASE), { signal: AbortSignal.timeout(180_000) });
-    if (!res.ok) throw new Error(`download failed (HTTP ${res.status})`);
-    const data = Buffer.from(await res.arrayBuffer());
     const fileId = newUploadId();
     let newId: string;
     if (mime.startsWith('video/')) {
