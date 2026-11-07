@@ -147,5 +147,12 @@ jobs:
             done
             if [ \$ok = 0 ]; then pm2 logs sagec --lines 40 --nostream; exit 1; fi
             echo 'Site answers on port 3022.'
+            # And it can read its database (a wrong password in .env would otherwise go unnoticed: pages
+            # quietly fall back to the starter texts).
+            if curl -sf -o /dev/null http://127.0.0.1:3022/api/globals/company-info; then
+              echo 'Site reads the database.'
+            else
+              echo '::warning title=Database::The site is up but cannot read its database. Run Actions → Server setup to write the right address into /var/www/sagec/.env.'
+            fi
             # Keep the last 3 releases (to roll back quickly), delete older ones.
             ls -1dt releases/* | tail -n +4 | xargs -r rm -rf"
