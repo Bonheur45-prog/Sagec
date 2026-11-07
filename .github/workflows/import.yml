@@ -53,6 +53,9 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - name: Install
         run: npm ci
+
+      - name: Check the database address
+        run: node deploy/check-db-url.mjs
       - name: Install ffprobe (video sizes)
         run: sudo apt-get install -y -qq ffmpeg > /dev/null || true
       - name: Open a tunnel to the database on the VPS
