@@ -1,5 +1,8 @@
 # Finishes the server side of SAGEC from GitHub, so nothing has to be typed on the VPS.
 # Run by hand: Actions → "Server setup" → Run workflow. Safe to run again (nothing is added twice).
+#  - always: writes the database address from the DATABASE_URL secret into /var/www/sagec/.env (the deploy
+#    already uses that secret, so the site and the deploy can never disagree), restarts the site and checks
+#    that it reads the database
 #  - always: installs the nightly database backup (02:17 every night, 14 days kept) and makes one backup now
 #  - "Go live" ticked: adds sagecltd.com + www to Caddy (HTTPS), checks the file, reloads Caddy. The other
 #    sites keep running; if the check fails the old Caddy file is put back. Tick it right before pointing the
@@ -33,6 +36,40 @@ jobs:
           printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
           ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Check the database address
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: node web/deploy/check-db-url.mjs
+
+      - name: Database address in the site's settings file
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          # The new line goes through stdin, so the password never appears in a command line or the log.
+          printf 'DATABASE_URL="%s"\n' "$DATABASE_URL" | ssh -i ~/.ssh/id_deploy "$VPS_USER@$VPS_HOST" 'set -e
+            F=/var/www/sagec/.env
+            NEW=$(cat)
+            [ -f "$F" ] || { echo "::error::$F does not exist (DEPLOY.md step 2)"; exit 1; }
+            if grep -qxF "$NEW" "$F"; then
+              echo "The database address in .env is already right."
+            else
+              umask 077
+              cp "$F" "$F.bak"
+              { printf "%s\n" "$NEW"; grep -v "^DATABASE_URL=" "$F.bak"; } > "$F.new"
+              mv "$F.new" "$F"
+              chmod 600 "$F" "$F.bak"
+              echo "Database address updated in .env (previous file kept as .env.bak)."
+              pm2 restart sagec --update-env > /dev/null
+            fi
+            for i in $(seq 1 30); do
+              if curl -sf -o /dev/null http://127.0.0.1:3022/api/globals/company-info; then echo "The site reads the database."; exit 0; fi
+              sleep 1
+            done
+            pm2 logs sagec --lines 30 --nostream
+            echo "::error title=Database::The site cannot read the database. If you changed the sagec password on the VPS, put the new one in the DATABASE_URL secret and run this again."
+            exit 1'
 
       - name: Nightly backup
         env:
