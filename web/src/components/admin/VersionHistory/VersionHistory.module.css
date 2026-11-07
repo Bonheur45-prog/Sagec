@@ -1,6 +1,8 @@
 .history {
   background: var(--white);
   border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
 }
 
 .summary {

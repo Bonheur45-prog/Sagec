@@ -1,24 +1,29 @@
 .editor { display: grid; gap: var(--space-4); }
-.section { background: var(--white); border: 1px solid var(--line); }
-.sectionTitle { cursor: pointer; padding: var(--space-3) var(--space-4); font-size: var(--step-1); font-weight: 600; list-style-position: inside; }
-.sectionBody { padding: 0 var(--space-4) var(--space-4); }
+.section { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); }
+.sectionTitle { display: flex; align-items: center; gap: var(--space-2); cursor: pointer; padding: var(--space-4) var(--space-5); font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; list-style: none; }
+.sectionTitle::-webkit-details-marker { display: none; }
+.sectionTitle::before { content: ''; width: 0.5rem; height: 0.5rem; border-right: 2px solid var(--navy-400); border-bottom: 2px solid var(--navy-400); transform: rotate(-45deg); transition: transform var(--duration-fast) var(--ease-out); }
+.section[open] > .sectionTitle::before { transform: rotate(45deg); }
+.section[open] > .sectionTitle { border-bottom: 1px solid var(--line); margin-bottom: var(--space-4); }
+.sectionBody { padding: 0 var(--space-5) var(--space-5); }
 .section > .hint { padding: 0 var(--space-4); margin-bottom: var(--space-2); }
 .fields { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .field { display: grid; gap: var(--space-1); flex: 1 1 16rem; align-content: start; }
 .wide { flex-basis: 100%; }
 .label { font-size: var(--step--1); font-weight: 600; }
 .req { color: var(--danger-700); }
-.input { min-height: 2.5rem; padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-control); font: inherit; background: var(--white); width: 100%; }
+.input { min-height: 2.5rem; padding: var(--space-2) var(--space-3); border: 1px solid var(--line-strong); border-radius: var(--radius-control); font: inherit; background: var(--white); width: 100%; }
 textarea.input { resize: vertical; }
-.input:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 0; }
+.input:focus-visible { outline: none; border-color: var(--orange-500); box-shadow: var(--ring); }
 .field[data-invalid] .input { border-color: var(--danger-700); }
 .error { font-size: var(--step--1); color: var(--danger-700); }
 .hint { font-size: var(--step--1); color: var(--text-muted); }
-.group { flex-basis: 100%; display: grid; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--line); background: var(--plaster); min-width: 0; }
+.group { flex-basis: 100%; display: grid; gap: var(--space-2); padding: var(--space-4); border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); min-width: 0; }
 .group[data-invalid] { border-color: var(--danger-700); }
-.legend { font-weight: 600; padding: 0 var(--space-1); }
+.legend { float: left; width: 100%; margin-bottom: var(--space-1); padding: 0; font-weight: 700; }
+.legend + * { clear: both; }
 .count { font-weight: 400; color: var(--text-muted); }
-.item { background: var(--white); border: 1px solid var(--line); }
+.item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); }
 .item[open] { padding-bottom: var(--space-3); }
 .item > .fields { padding: 0 var(--space-3); }
 .itemHead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-2) var(--space-3); cursor: pointer; }
@@ -27,7 +32,7 @@ textarea.input { resize: vertical; }
 .tools { display: flex; gap: var(--space-1); flex-shrink: 0; }
 .uploadRow { display: flex; align-items: center; gap: var(--space-2); }
 .list { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); }
-.card { display: grid; gap: var(--space-1); padding: var(--space-4); background: var(--white); border: 1px solid var(--line); text-decoration: none; color: inherit; }
+.card { display: grid; gap: var(--space-1); padding: var(--space-4); background: var(--white); border: 1px solid var(--line); text-decoration: none; color: inherit; border-radius: var(--radius-panel); box-shadow: var(--shadow-panel); }
 .card:hover { border-color: var(--gold-500); }
 .cardTitle { font-weight: 600; font-size: var(--step-1); }
 .badge { font-size: var(--step--1); color: var(--text-muted); }

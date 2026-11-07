@@ -1,4 +1,5 @@
-/* SAGEC Ltd CMS — design tokens (admin only).
+/* SAGEC Ltd CMS — design tokens (admin only). "SAGEC Workspace" look: light, airy panels on a cool
+   canvas, rounded controls, soft shadows, orange as the action colour and navy for text and accents.
    Rule: component CSS Modules use ONLY these variables for colour, type, spacing and motion.
    Brand values match the public site (frontend/src/styles/variables.css): navy #1B2A4A, orange #F26522.
    Contrast (WCAG, computed): navy-800 on white 14.2:1 · orange-700 on white 5.4:1 ·
@@ -7,7 +8,11 @@
 :root {
   /* Colour — brand: navy, orange, white */
   --white: #ffffff;
-  --plaster: #f4f6f9; /* quiet alternate surface (page background) */
+  --plaster: #f3f5f9; /* the canvas behind every panel */
+  --surface-2: #f8f9fc; /* quiet fill inside a panel (nested groups, table heads) */
+  --orange-50: #fff3eb; /* tint behind the active menu item and orange badges */
+  --orange-600: #c2410c; /* primary buttons: white text 5.2:1 */
+  --orange-800: #9a3412;
 
   --navy-900: #111d33; /* sidebar, deepest bands */
   --navy-800: #1b2a4a; /* SAGEC navy: text on white, dark bands */
@@ -34,8 +39,12 @@
   --text-muted: var(--navy-400);
   --text-on-dark: var(--white);
   --text-on-dark-muted: #c9d3e6; /* 11.2:1 on navy-900 */
-  --line: rgb(27 42 74 / 0.14);
+  --line: #e2e7ef;
+  --line-strong: #cdd5e1;
   --line-accent: rgb(242 101 34 / 0.55);
+  /* names used by a few early components */
+  --line-gold: var(--line-accent);
+  --gold-500: var(--orange-500);
 
   /* Typography — SAGEC brand fonts (self-hosted from npm, imported in src/app/admin/layout.tsx):
      Plus Jakarta Sans for headings, Inter for everything else. */
@@ -72,8 +81,13 @@
   --gutter: clamp(var(--space-4), 4vw, var(--space-7));
   --page-max: 80rem;
 
-  /* Shape: hard edges, like a picture frame. One tiny radius for controls only. */
-  --radius-control: 2px;
+  /* Shape: rounded controls (10px) and panels (16px), pills for badges, soft shadows. */
+  --radius-control: 10px;
+  --radius-panel: 16px;
+  --radius-pill: 999px;
+  --shadow-panel: 0 1px 2px rgb(16 24 40 / 0.04), 0 4px 16px rgb(16 24 40 / 0.05);
+  --shadow-raised: 0 2px 6px rgb(16 24 40 / 0.06), 0 16px 40px rgb(16 24 40 / 0.1);
+  --ring: 0 0 0 4px rgb(242 101 34 / 0.18);
   --radius-soft: 0.625rem; /* only the Soft hero button, matching that design's rounded look */
   --frame-inset: 0.9rem;
   /* Store-style cards (home sections, product grid): soft corners and a quiet shadow */

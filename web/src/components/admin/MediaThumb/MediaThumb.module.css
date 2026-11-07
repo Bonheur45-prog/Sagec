@@ -3,6 +3,7 @@
   display: block;
   flex: none;
   overflow: hidden;
+  border-radius: 10px;
   background: var(--plaster);
 }
 

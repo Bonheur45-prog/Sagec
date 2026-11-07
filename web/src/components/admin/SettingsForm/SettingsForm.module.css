@@ -1,6 +1,6 @@
 .form { display: grid; gap: var(--space-5); max-width: 48rem; }
 .stack { display: grid; gap: var(--space-4); }
-.actions { position: sticky; bottom: 0; padding: var(--space-3) 0; background: var(--plaster); border-top: 1px solid var(--line); }
+.actions { position: sticky; bottom: var(--space-4); z-index: 5; display: flex; justify-content: flex-end; padding: var(--space-3) var(--space-4); background: rgb(255 255 255 / 0.92); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-raised); }
 .preview { padding: var(--space-3) var(--space-4); background: var(--white); border: 1px solid var(--line); font-family: arial, sans-serif; }
 .previewLabel { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 .previewTitle { color: #1a0dab; font-size: 1.15rem; margin-top: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

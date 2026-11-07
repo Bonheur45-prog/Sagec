@@ -6,6 +6,8 @@
   background: var(--white);
   border: 1px solid var(--line);
   font-size: var(--step--1);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
 }
 
 .row {

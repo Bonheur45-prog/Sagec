@@ -5,7 +5,8 @@
 
 .zone {
   position: relative;
-  border: 1px dashed var(--navy-400);
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius-panel);
   background: var(--white);
   transition:
     border-color var(--duration-fast) var(--ease-out),

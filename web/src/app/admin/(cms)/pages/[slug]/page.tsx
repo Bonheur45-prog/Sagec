@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Button } from '@/components/admin/Button/Button';
 import { notFound } from 'next/navigation';
 import { Notice } from '@/components/admin/Notice/Notice';
 import { PageEditor } from '@/components/admin/PageEditor/PageEditor';
@@ -47,20 +47,18 @@ export default async function EditPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <p>
-        <Link href="/admin/pages">← All pages</Link>
-      </p>
       <PageHeader
+        back={{ href: '/admin/pages', label: 'All pages' }}
         title={`${info.title}${slug === 'seo-settings' ? '' : ' page'}`}
         description={`${info.blurb} Changes stay a draft until you publish them; earlier versions can be brought back below.`}
+        actions={
+          info.url ? (
+            <Button href={info.url} newTab variant="secondary">
+              View on website ↗
+            </Button>
+          ) : undefined
+        }
       />
-      {info.url && (
-        <p>
-          <a href={info.url} target="_blank" rel="noopener">
-            View the page on the website ↗
-          </a>
-        </p>
-      )}
       {notice && <Notice tone="success">{notice}</Notice>}
       {error && <Notice tone="error">{error}</Notice>}
       <PageEditor key={JSON.stringify(state.draft)} pageKey={key} fields={pageSchema(slug).fields} initial={state.draft} unpublished={state.hasUnpublishedChanges} media={media} />

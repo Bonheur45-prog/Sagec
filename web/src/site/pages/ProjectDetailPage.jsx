@@ -1,63 +1,14 @@
 'use client';
 
-import { useState } from 'react'
 import { useParams, Link, Navigate } from '@site/router'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useProject, useProjects, useProjectsPage, getProjectSpecs, projectQuery } from '@hooks/useProjects'
 import { usePrefetch } from '@hooks/usePrefetch'
 import { mediaURL } from '@lib/api'
 import PageLoader from '@components/ui/PageLoader'
 import Seo from '@components/ui/Seo'
+import ProjectGallery from '@components/projects/ProjectGallery'
 import styles from './ProjectDetailPage.module.css'
-
-// ── GALLERY SLIDER ─────────────────────────────────────────
-
-function GallerySlider({ images, title }) {
-  const [current, setCurrent] = useState(0)
-  if (!images?.length) return null
-
-  const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length)
-  const next = () => setCurrent((c) => (c + 1) % images.length)
-
-  return (
-    <div className={styles.gallery}>
-      <div className={styles.galleryMain}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={current}
-            src={images[current]}
-            alt={`${title} — image ${current + 1}`}
-            className={styles.galleryImage}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          />
-        </AnimatePresence>
-        {images.length > 1 && (
-          <>
-            <button className={`${styles.galleryArrow} ${styles.galleryArrowLeft}`} onClick={prev} aria-label="Previous image">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-            <button className={`${styles.galleryArrow} ${styles.galleryArrowRight}`} onClick={next} aria-label="Next image">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-          </>
-        )}
-        <div className={styles.galleryCounter} aria-live="polite">{current + 1} / {images.length}</div>
-      </div>
-      {images.length > 1 && (
-        <div className={styles.thumbnails}>
-          {images.map((img, i) => (
-            <button key={i} className={`${styles.thumbnail} ${i === current ? styles.thumbnailActive : ''}`} onClick={() => setCurrent(i)} aria-label={`View image ${i + 1}`}>
-              <img src={img} alt="" className={styles.thumbnailImg} />
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
 
 // ── MAIN PAGE ──────────────────────────────────────────────
 
@@ -88,7 +39,10 @@ export default function ProjectDetailPage() {
     return <Navigate to="/projects" replace />
   }
   const specs = getProjectSpecs(project)
-  const galleryImages = (project.gallery ?? []).map((g) => mediaURL(g.image?.url))
+  // Gallery photos: the 1600px copy for the big frame (lighter than the original), with the photo's own description.
+  const galleryImages = (project.gallery ?? [])
+    .filter((g) => g.image?.url)
+    .map((g) => ({ src: mediaURL(g.image.sizes?.tablet?.url ?? g.image.url), alt: g.image.alt }))
 
   const related = (allProjects ?? [])
     .filter((p) => p.slug !== slug && p.category === project.category)
@@ -143,11 +97,16 @@ export default function ProjectDetailPage() {
       </section>
 
       {/* ── GALLERY ───────────────────────── */}
-      <section className={styles.gallerySection}>
+      {galleryImages.length > 0 && <section className={styles.gallerySection}>
         <div className={styles.galleryContainer}>
-          <GallerySlider images={galleryImages} title={project.title} />
+          <ProjectGallery
+            slides={galleryImages}
+            heading={labels?.galleryHeading || 'Gallery'}
+            title={project.title}
+            location={project.location}
+          />
         </div>
-      </section>
+      </section>}
 
       {/* ── OVERVIEW + SPECS ──────────────── */}
       <section className={styles.detailSection}>
