@@ -1,5 +1,7 @@
 # Finishes the server side of SAGEC from GitHub, so nothing has to be typed on the VPS.
 # Run by hand: Actions → "Server setup" → Run workflow. Safe to run again (nothing is added twice).
+#  - "Change the database password" ticked: first put a new password in the DATABASE_URL secret; this logs in
+#    with the old one (from the VPS .env) and switches the database to the new one
 #  - always: writes the database address from the DATABASE_URL secret into /var/www/sagec/.env (the deploy
 #    already uses that secret, so the site and the deploy can never disagree), restarts the site and checks
 #    that it reads the database
@@ -12,6 +14,10 @@ name: Server setup
 on:
   workflow_dispatch:
     inputs:
+      change_db_password:
+        description: 'Change the database password to the one now in the DATABASE_URL secret (update the secret first)'
+        type: boolean
+        default: false
       go_live:
         description: 'Go live: add sagecltd.com to Caddy (then switch the DNS in Cloudflare)'
         type: boolean
@@ -41,6 +47,17 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: node web/deploy/check-db-url.mjs
+
+      - name: Change the database password
+        if: inputs.change_db_password
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          scp -i ~/.ssh/id_deploy web/deploy/change-db-password.sh "$VPS_USER@$VPS_HOST:/var/www/sagec/change-db-password.sh"
+          # The new password goes through stdin: never in a command line or the log.
+          node -e 'process.stdout.write(decodeURIComponent(new URL(process.env.DATABASE_URL).password))' \
+            | ssh -i ~/.ssh/id_deploy "$VPS_USER@$VPS_HOST" 'bash /var/www/sagec/change-db-password.sh'
 
       - name: Database address in the site's settings file
         env:

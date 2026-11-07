@@ -150,6 +150,9 @@ Restore: `gunzip -c backups/sagec-<date>.sql.gz | psql "<DATABASE_URL without ?s
   release keeps running.
 - **Roll back**: `cd /var/www/sagec && ls -1dt releases/*` then
   `ln -sfn releases/<older> current && pm2 reload sagec`.
+- **Change the database password**: make a new password (letters and numbers only), put it in the `DATABASE_URL`
+  secret, then Actions → **Server setup** → tick **Change the database password** → Run. It switches the database
+  to the new password, writes it into the VPS `.env`, restarts the site and checks it reads the database.
 - **After changing `.env`**: `pm2 restart sagec --update-env`.
 - **Logs**: `pm2 logs sagec --lines 100`.
 - **Memory**: one Node process, heap capped at 384 MB, restarted by PM2 above 600 MB.

@@ -1,5 +1,5 @@
 // The editable texts and photos of each website page. The field lists (schemas.json) were generated from
-// the old Payload page settings (scripts/gen-page-schemas.ts), so content imported from the old CMS fits
+// the old Payload page settings (once, before the old CMS was removed), so content imported from the old CMS fits
 // as it is and the site's sections read the same names. Pure: no database here (tested in pages.test.ts).
 
 import rawSchemas from './schemas.json';
